@@ -113,6 +113,9 @@ build_rootfs()
         sudo bash -c 'chroot . apt -y autoremove'
         sudo bash -c 'chroot . apt -y clean'
 
+        # Disable sleep as Asahi doesn't handle that well at the moment
+        sudo bash -c 'chroot . systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
+
         sudo -- perl -p -i -e 's/root:x:/root::/' etc/passwd
 
         sudo -- ln -s lib/systemd/systemd init
@@ -172,7 +175,7 @@ build_installer_layout() {
 (
         mkdir -p ../out/os
         cp pop-base.zip ../out/os
-        cp ../installer_data.json out
+        cp ../installer_data.json ../out
         cat > ../out/.env <<EOF
 export REPO_BASE="$PWD"
 export INSTALLER_DATA="$PWD/installer_data.json"
@@ -184,7 +187,14 @@ EOF
 mkdir -p build
 cd build
 
-sudo apt-get install -y equivs build-essential bash git locales gcc-aarch64-linux-gnu libc6-dev-arm64-cross device-tree-compiler imagemagick ccache eatmydata debootstrap pigz libncurses-dev qemu-user-static binfmt-support rsync git flex bison bc kmod cpio libncurses5-dev libelf-dev:native libssl-dev dwarves
+if ! command -v bash &> /dev/null
+then
+    apt install sudo
+    exit
+fi
+
+
+sudo apt install -y curl zip python3 equivs build-essential bash git locales gcc-aarch64-linux-gnu libc6-dev-arm64-cross device-tree-compiler imagemagick ccache eatmydata debootstrap pigz libncurses-dev qemu-user-static binfmt-support rsync git flex bison bc kmod cpio libncurses5-dev libelf-dev:native libssl-dev dwarves
 
 build_linux
 build_m1n1
