@@ -1,0 +1,136 @@
+#!/usr/bin/perl
+
+my $firmware_tarball = '/boot/efi/vendorfw/firmware.tar';
+my $firmware_manifest = '/lib/firmware/ASAHI_FIRMWARE_MANIFEST';
+my $grubcfg = '/mnt/EFI/debian/grub.cfg';
+
+sub
+find_root_device
+{
+        open(MOUNT, '<', '/proc/mounts') || die ("Can not open /proc/mounts for reading: $!");
+        my @lines = <MOUNT>;
+        close(MOUNT);
+
+        for (@lines) {
+                if (/^([\S]+)+ \/ /) {
+                        return $1;
+                }
+        }
+
+        die("Could not find root device");
+}
+
+sub
+find_fs_uuid_of_device
+{
+        my $dev = shift || die;
+        my $blkid_output = `blkid ${dev}`;
+
+        if ($blkid_output =~ /UUID="([^"]+)"/) {
+                return $1;
+        }
+
+        die("Could not find fs uuid of $dev");
+}
+
+sub
+find_efi_parition
+{
+        my $uuid_in_grub_cfg = shift || die;
+        my @candidates;
+
+        my $efi_parition = undef;
+
+        for (`blkid`) {
+                if (/^([\S]+):.*TYPE="vfat"/) {
+                        push(@candidates, $1);
+                }
+        }
+
+        for my $dev (@candidates) {
+                system("mount -o ro $dev /mnt");
+                        if (-f $grubcfg) {
+                                open(GRUBCFG, '<', $grubcfg) || die ("Can't open $grubcfg: $!");
+                                my @lines = <GRUBCFG>;
+                                for (@lines) {
+                                        if (/${uuid_in_grub_cfg}/) {
+                                                $efi_parition = $dev;
+                                        }
+                                }
+                                close(GRUBCFG);
+                        }
+                system("umount /mnt");
+                last if defined $efi_parition;
+        }
+
+        die ("No efi parition found") unless defined $efi_parition;
+
+        return $efi_parition;
+}
+
+sub
+generate_fstab
+{
+        my $root_fs_uuid = shift || die;
+        my $efi_fs_uuid = shift || die;
+
+        open(FSTAB, '>', '/etc/fstab') || die ("Can not open fstab");
+        print FSTAB <<EOF;
+UUID="$root_fs_uuid" /         ext4 defaults 0 0
+UUID="$efi_fs_uuid"  /boot/efi vfat defaults 0 0
+EOF
+        close(FSTAB);
+}
+
+sub
+install_grub
+{
+        system('rm -rf /boot/efi/EFI');
+        system('apt-get install -y grub-efi-arm64-signed-');
+        system("echo 'grub-efi-arm64 grub2/update_nvram boolean false' | debconf-set-selections");
+        system("echo 'grub-efi-arm64 grub2/force_efi_extra_removable boolean true' | debconf-set-selections");
+        system('dpkg-reconfigure -fnoninteractive grub-efi-arm64');
+        system('update-grub');
+        system('grub-install --removable /boot/efi');
+}
+
+sub
+update_wifi_firmware_if_necessary
+{
+        return unless -f $firmware_tarball;
+
+        if (-f $firmware_manifest) {
+                system("sha256sum -c $firmware_manifest --quiet");
+                return if $? == 0;
+        }
+
+        system("sha256sum $firmware_tarball > $firmware_manifest");
+        system("tar -C /lib/firmware/ -xf $firmware_tarball");
+
+        system('rmmod brcmfmac');
+        system('rmmod brcmutil');
+        sleep(1);
+        system('modprobe brcmfmac');
+        sleep(1);
+        system('rmmod brcmfmac');
+        sleep(1);
+        system('modprobe brcmfmac');
+}
+
+my $root_block_device = undef;
+my $initial_root_fs_uuid = undef;
+my $efi_block_device = undef;
+my $efi_fs_uuid = undef;
+
+unless (-f '/boot/grub/grub.cfg') {
+        $root_block_device = find_root_device();
+        system("resize2fs $root_block_device");
+        $initial_root_fs_uuid = find_fs_uuid_of_device($root_block_device);
+        $efi_block_device = find_efi_parition($initial_root_fs_uuid);
+        $efi_fs_uuid = find_fs_uuid_of_device($efi_block_device);
+        generate_fstab($initial_root_fs_uuid, $efi_fs_uuid);
+        system('mount /boot/efi');
+        install_grub();
+}
+
+update_wifi_firmware_if_necessary();

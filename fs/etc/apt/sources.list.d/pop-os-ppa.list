@@ -1,0 +1,2 @@
+deb http://apt.pop-os.org/release jammy main
+deb-src http://apt.pop-os.org/release jammy main
