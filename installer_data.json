@@ -5,7 +5,7 @@
 			"default_os_name": "Pop!_OS",
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
-			"package": "pop.zip",
+			"package": "pop-base.zip",
 			"supported_fw": [
 				"12.3"
 			],
