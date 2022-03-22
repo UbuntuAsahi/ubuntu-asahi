@@ -1,0 +1,32 @@
+{
+	"os_list": [
+		{
+			"name": "Pop!_OS 22.04",
+			"default_os_name": "Pop!_OS",
+			"boot_object": "m1n1.bin",
+			"next_object": "m1n1/boot.bin",
+			"package": "pop.zip",
+			"supported_fw": [
+				"12.3"
+			],
+			"partitions": [
+				{
+					"name": "EFI",
+					"type": "EFI",
+					"size": "500MB",
+					"format": "fat",
+					"copy_firmware": true,
+					"copy_installer_data": true,
+					"source": "esp"
+				},
+				{
+					"name": "Root",
+					"type": "Linux",
+					"size": "6GB",
+					"expand": true,
+					"image": "media"
+				}
+			]
+		}
+	]
+}

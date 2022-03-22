@@ -75,6 +75,7 @@ build_rootfs()
         handle_crosscompile
         sudo rm -rf testing
         mkdir -p cache
+        sudo update-binfmts --enable
         sudo eatmydata qemu-debootstrap \
                 --arch=arm64 \
                 --cache-dir=`pwd`/cache \
@@ -163,20 +164,34 @@ build_asahi_installer_image()
         cp u-boot.bin aii/esp/m1n1/boot.bin
         ln media aii/media
         cd aii
-        zip -r9 ../debian-base.zip esp media
+        zip -r9 ../pop-base.zip esp media
 )
 }
+
+build_installer_layout() {
+(
+        mkdir -p ../out/os
+        cp pop-base.zip ../out/os
+        cp ../installer_data.json out
+        cat > ../out/.env <<EOF
+export REPO_BASE="$PWD"
+export INSTALLER_DATA="$PWD/installer_data.json"
+EOF
+)
+}
+
 
 mkdir -p build
 cd build
 
-#sudo apt-get install -y build-essential bash git locales gcc-aarch64-linux-gnu libc6-dev-arm64-cross device-tree-compiler imagemagick ccache eatmydata debootstrap pigz libncurses-dev qemu-user-static binfmt-support rsync git flex bison bc kmod cpio libncurses5-dev libelf-dev:native libssl-dev dwarves
+sudo apt-get install -y equivs build-essential bash git locales gcc-aarch64-linux-gnu libc6-dev-arm64-cross device-tree-compiler imagemagick ccache eatmydata debootstrap pigz libncurses-dev qemu-user-static binfmt-support rsync git flex bison bc kmod cpio libncurses5-dev libelf-dev:native libssl-dev dwarves
 
-#build_linux
-#build_m1n1
-#build_uboot
+build_linux
+build_m1n1
+build_uboot
 build_dummy
 build_rootfs
 build_dd
 build_efi
 build_asahi_installer_image
+build_installer_layout
