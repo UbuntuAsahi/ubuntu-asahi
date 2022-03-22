@@ -85,6 +85,8 @@ build_rootfs()
                 http://ports.ubuntu.com/ubuntu-ports
 
         export KERNEL=`ls -1rt linux-image*.deb | grep -v dbg | tail -1`
+        export KERNEL_HEADERS=`ls -1rt linux-headers*.deb | grep -v dbg | tail -1`
+        export KERNEL_LIBC=`ls -1rt linux-libc-dev*.deb | grep -v dbg | tail -1`
         export DUMMY=`ls -1rt linux-pop-m1-dummy*.deb | tail -1`
 
         cd testing
@@ -103,7 +105,7 @@ build_rootfs()
         # Install kernel + linux-{system76,raspi} dummy packages
         sudo cp ../${KERNEL} .
         sudo cp ../${DUMMY} .
-        sudo chroot . dpkg -i ${KERNEL} ${DUMMY}
+        sudo chroot . dpkg -i ${KERNEL} ${KERNEL_HEADERS} ${KERNEL_LIBC} ${DUMMY}
         sudo rm ${KERNEL} ${DUMMY}
 
         # Ensure actual Pi packages are never installed
