@@ -103,10 +103,9 @@ build_rootfs()
 
 
         # Install kernel + linux-{system76,raspi} dummy packages
-        sudo cp ../${KERNEL} .
-        sudo cp ../${DUMMY} .
+        sudo cp -t . ../${KERNEL} ../${KERNEL_HEADERS} ../${KERNEL_LIBC} ../${DUMMY}
         sudo chroot . dpkg -i ${KERNEL} ${KERNEL_HEADERS} ${KERNEL_LIBC} ${DUMMY}
-        sudo rm ${KERNEL} ${DUMMY}
+        sudo rm ${KERNEL} ${KERNEL_HEADERS} ${KERNEL_LIBC} ${DUMMY}
 
         # Ensure actual Pi packages are never installed
         sudo bash -c 'chroot . apt-mark hold snapd pop-desktop-raspi linux-raspi linux-firmware-raspi2 rpi-eeprom u-boot-rpi'
