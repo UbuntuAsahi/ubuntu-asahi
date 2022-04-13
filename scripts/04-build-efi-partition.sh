@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe
+set -e
 
 source $(dirname "$(readlink -f "$0")")/00-config.sh
 
@@ -8,8 +8,9 @@ STARTING_DIR="$PWD"
 trap "cd \"$STARTING_DIR\"" EXIT
 
 # Allocate space for boot image
-fallocate -l "$BOOT_IMG_SIZE" efi.img
+info "Allocating efi.img ($BOOT_IMG_SIZE MiB)"
+dd if=/dev/zero of=efi.img bs=1M count="$BOOT_IMG_SIZE" status=progress 2>&1| capture_and_log "allocate efi.img"
 
 # Create FAT32 partition
-mkfs.vfat -F 32 -n efi efi.img
+mkfs.vfat -F 32 -n EFI efi.img 2>&1| capture_and_log "make efi.img fs"
 

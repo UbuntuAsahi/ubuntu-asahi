@@ -1,27 +1,29 @@
 #!/bin/bash
-set -xe
+set -e
 
 source $(dirname "$(readlink -f "$0")")/00-arm64-cross-compile.sh
+source $(dirname "$(readlink -f "$0")")/00-config.sh
 
 # Go back to starting dir on script exit
 STARTING_DIR="$PWD"
 trap "cd \"$STARTING_DIR\"" EXIT
 
 # Pull in Asahi's u-boot
-test -d u-boot || git clone --depth 1 https://github.com/AsahiLinux/u-boot
+info "Cloning u-boot"
+test -d u-boot || git clone --depth 1 https://github.com/AsahiLinux/u-boot 2>&1| capture_and_log "clone u-boot"
 cd u-boot
 
 # Ensure u-boot is up to date.
-git fetch
-git reset --hard origin/asahi
-git clean -f -x -d &> /dev/null
+info "Ensuring u-boot is up to date"
+git fetch 2>&12>&1| capture_and_log "fetch u-boot"
+git reset --hard origin/asahi 2>&1| capture_and_log "reset u-boot"
+git clean -f -x -d &> /dev/null 2>&1| capture_and_log "clean u-boot"
 
 # Set up config
-make apple_m1_defconfig
+info "Setting up u-boot config"
+make apple_m1_defconfig 2>&1| capture_and_log "setup u-boot config"
 
 # Build u-boot
-make -j `nproc`
-
-# Copy output files
-cat build/m1n1.bin   `find linux/arch/arm64/boot/dts/apple/ -name \*.dtb` <(gzip -c u-boot/u-boot-nodtb.bin) > ../u-boot.bin
-cat build/m1n1.macho `find linux/arch/arm64/boot/dts/apple/ -name \*.dtb` <(gzip -c u-boot/u-boot-nodtb.bin) > ../u-boot.macho
+info "Building u-boot"
+make -j `nproc` 2>&1| capture_and_log "build u-boot"
+info "u-boot built"

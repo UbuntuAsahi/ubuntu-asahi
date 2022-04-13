@@ -1,6 +1,39 @@
 #!/bin/bash
-set -a
 # How big is the boot partition? (default: 150 MB)
-BOOT_IMG_SIZE=${BOOT_IMG_SIZE:-153600}
-# How much to round up the base rootfs image size by (default: 512 MB)
-ROOTFS_ROUND_UP_BY=${ROOTFS_ROUND_UP_BY:-$((512 * 1024 * 1024))}
+BOOT_IMG_SIZE=${BOOT_IMG_SIZE:-150}
+# How much to round up the base rootfs image size by (default: 5 GiB)
+ROOTFS_ROUND_UP_BY=${ROOTFS_ROUND_UP_BY:-5120}
+
+_RED=$(tput setaf 1 || "")
+_GREEN=$(tput setaf 2 || "")
+_YELLOW=$(tput setaf 3 || "")
+_RESET=$(tput sgr0 || "")
+_BOLD=$(tput bold || "")
+_DIM=$(tput dim || "")
+
+function bold {
+	echo "${_BOLD}$@${_RESET}"
+}
+
+function info {
+	echo "[${_GREEN}${_BOLD}info${_RESET}] $@"
+}
+
+function error {
+	echo "[${_RED}${_BOLD}error${_RESET}] $@"
+}
+
+function warn {
+	echo "[${_YELLOW}${_BOLD}warning${_RESET}] $@"
+}
+
+function capture_and_log {
+	PREFIX="[${_GREEN}${_BOLD}$1${_RESET}] ${_DIM}"
+	SUFFIX="${_RESET}"
+	while read IN
+	do
+		echo "${PREFIX}${IN}${SUFFIX}"
+	done
+}
+
+sudo update-binfmts --enable
