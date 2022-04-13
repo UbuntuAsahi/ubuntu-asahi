@@ -6,7 +6,7 @@ Priority: optional
 # Homepage: <enter URL here; no default>
 Standards-Version: 3.9.2
 
-Package: linux-pop-m1-dummy
+Package: linux-pop-arm64-dummy
 Version: 5.17.0
 # Maintainer: Your Name <yourname@example.com>
 # Pre-Depends: <comma-separated list of packages>

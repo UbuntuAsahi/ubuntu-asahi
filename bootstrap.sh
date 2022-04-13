@@ -2,8 +2,7 @@
 
 # SPDX-License-Identifier: MIT
 
-set -x
-set -e
+set -xe
 
 unset LC_CTYPE
 unset LANG
