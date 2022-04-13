@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-source 00-arm64-cross-compile.sh
+source $(dirname "$(readlink -f "$0")")/00-arm64-cross-compile.sh
 
 # Go back to starting dir on script exit
 STARTING_DIR="$PWD"

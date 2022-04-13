@@ -1,13 +1,13 @@
 #!/bin/bash
 set -xe
 
-source 00-config.sh
+source $(dirname "$(readlink -f "$0")")/00-config.sh
 
 # Go back to starting dir and clean up mounts on script exit
 STARTING_DIR="$PWD"
 function on_exit() {
 	sudo umount mnt || true
-	sudo rm -rf mount
+	sudo rm -rf mnt
 	cd "$STARTING_DIR"
 }
 trap on_exit EXIT
@@ -30,4 +30,4 @@ mkdir mnt
 sudo mount -o loop rootfs.img mnt
 
 # Rsync rootfs to mnt
-rsync -ar rootfs/ mnt/
+sudo rsync -ar rootfs/ mnt/
