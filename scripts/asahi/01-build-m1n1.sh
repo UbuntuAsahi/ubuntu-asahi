@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-source $(dirname "$(readlink -f "$0")")/00-config.sh
+source $(dirname "$(readlink -f "$0")")/../00-config.sh
 
 # Go back to starting dir on script exit
 STARTING_DIR="$PWD"
