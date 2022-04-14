@@ -16,7 +16,7 @@ mkdir -p cache
 sudo eatmydata qemu-debootstrap \
 		--arch=arm64 \
 		--cache-dir=`pwd`/cache \
-		--include initramfs-tools,apt,grub-efi-arm64 \
+		--include initramfs-tools,apt \
 		jammy \
 		rootfs \
 		http://ports.ubuntu.com/ubuntu-ports 2>&1| capture_and_log "bootstrap pop"

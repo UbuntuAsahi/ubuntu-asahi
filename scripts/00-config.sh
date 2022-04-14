@@ -1,8 +1,4 @@
 #!/bin/bash
-# How big is the boot partition? (default: 150 MB)
-BOOT_IMG_SIZE=${BOOT_IMG_SIZE:-150}
-# How much to round up the base rootfs image size by (default: 5 GiB)
-ROOTFS_ROUND_UP_BY=${ROOTFS_ROUND_UP_BY:-5120}
 
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")

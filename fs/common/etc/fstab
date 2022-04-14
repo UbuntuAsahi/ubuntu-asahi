@@ -1,0 +1,2 @@
+UUID=POP_UUID		/			ext4	defaults,x-systemd.growfs	0	0
+UUID=EFI_UUID		/boot/efi	vfat	defaults					0	1
