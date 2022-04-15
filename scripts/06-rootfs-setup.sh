@@ -127,11 +127,12 @@ linux   /vmlinuz
 initrd  /initrd.img
 options root=UUID=${ROOTFS_UUID} rw quiet splash
 EOF
-sudo cp ../pop.conf boot/efi/loader/entries/pop.conf
+sudo cp ../pop.conf boot/efi/loader/entries/Pop_OS-current.conf
 sudo rm ../pop.conf
 
 info "Copying kernel and initrd to EFI"
 ACTUAL_VMLINUZ="boot/$(readlink boot/vmlinuz)"
 ACTUAL_INITRD="boot/$(readlink boot/initrd.img)"
-sudo cp "$ACTUAL_VMLINUZ" boot/efi/vmlinuz
+sudo cp "$ACTUAL_VMLINUZ" boot/efi/vmlinuz.gz
+sudo gzip -d boot/efi/vmlinuz.gz
 sudo cp "$ACTUAL_INITRD" boot/efi/initrd.img
