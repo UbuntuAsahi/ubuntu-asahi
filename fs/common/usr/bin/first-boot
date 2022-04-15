@@ -1,2 +1,6 @@
 #!/bin/bash
+set -e
+# Run kernelstub
 kernelstub --esp-path /boot/efi --loader --force-update --log-file /var/log/kernelstub-firstboot.log
+# Remove old vmlinuz and initrd (kernelstub will have created new ones)
+rm -f /boot/efi/{vmlinuz,initrd.img}
