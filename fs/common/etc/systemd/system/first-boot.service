@@ -1,0 +1,12 @@
+[Unit]
+Description=Pop!_OS First Boot Script
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/first-boot
+User=root
+Group=root
+ConditionFirstBoot=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+#!/bin/bash
+kernelstub --esp-path /boot/efi --loader --force-update --log-file /var/log/kernelstub-firstboot.log

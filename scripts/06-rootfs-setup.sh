@@ -136,3 +136,7 @@ ACTUAL_INITRD="boot/$(readlink boot/initrd.img)"
 sudo cp "$ACTUAL_VMLINUZ" boot/efi/vmlinuz.gz
 sudo gzip -d boot/efi/vmlinuz.gz
 sudo cp "$ACTUAL_INITRD" boot/efi/initrd.img
+
+# Enable first-boot service
+info "Enabling first-boot service"
+sudo bash -c "chroot . systemctl enable first-boot" 2>&1| capture_and_log "systemctl enable first-boot"
