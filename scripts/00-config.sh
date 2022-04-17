@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ "${EUID:-$(id -u)}" != 0 ]]; then
+	echo "This script must be run as root."
+	exit 1
+fi
+
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")
 _YELLOW=$(tput setaf 3 || "")
@@ -32,4 +37,6 @@ function capture_and_log {
 	done
 }
 
-sudo update-binfmts --enable
+if [[ "$(uname -p)" -ne "aarch64" ]]; then
+	update-binfmts --enable
+fi

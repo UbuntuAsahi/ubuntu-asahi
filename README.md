@@ -25,7 +25,7 @@ $ INSTALLER_PKG="installer-$(curl -s -L https://cdn.asahilinux.org/installer/lat
 $ curl -s -L -o "$INSTALLER_PKG" "https://cdn.asahilinux.org/installer/${INSTALLER_PKG}"
 $ tar xf "$INSTALLER_PKG"
 # Run the installer
-$ sudo ./install.sh
+$ ./install.sh
 ```
 
 ## Caveats

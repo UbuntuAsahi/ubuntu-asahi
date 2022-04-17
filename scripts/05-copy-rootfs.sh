@@ -8,23 +8,23 @@ STARTING_DIR="$PWD"
 function on_exit() {
 	cd "$STARTING_DIR"
 	sync
-	sudo umount -Rf mnt
-	sudo rm -rf mnt
-	sudo losetup --associated pop-os.img | cut -d ':' -f1 | while read LODEV
+	umount -Rf mnt
+	rm -rf mnt
+	losetup --associated pop-os.img | cut -d ':' -f1 | while read LODEV
 	do
-		sudo losetup --detach "$LODEV"
+		losetup --detach "$LODEV"
 	done
 }
 trap on_exit EXIT
 
 # Get loopback partitions
-LODEV="$(sudo losetup --find --show --partscan pop-os.img)"
+LODEV="$(losetup --find --show --partscan pop-os.img)"
 
 # Mount!
 info "Mounting rootfs.img"
 mkdir -p mnt
-sudo mount -o rw "${LODEV}p2" mnt 2>&1| capture_and_log "mount rootfs.img"
+mount -o rw "${LODEV}p2" mnt 2>&1| capture_and_log "mount rootfs.img"
 
 # Rsync rootfs to mnt
 info "Copying rootfs to mounted rootfs.img"
-sudo rsync -arv rootfs/ mnt/ 2>&1| capture_and_log "copy rootfs"
+rsync -arv rootfs/ mnt/ 2>&1| capture_and_log "copy rootfs"

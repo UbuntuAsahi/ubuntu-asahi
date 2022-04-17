@@ -8,11 +8,11 @@ STARTING_DIR="$PWD"
 function on_exit() {
 	cd "$STARTING_DIR"
 	sync
-	sudo umount -Rf mnt
-	sudo rm -rf mnt
-	sudo losetup --associated pop-os.img | cut -d ':' -f1 | while read LODEV
+	umount -Rf mnt
+	rm -rf mnt
+	losetup --associated pop-os.img | cut -d ':' -f1 | while read LODEV
 	do
-		sudo losetup --detach "$LODEV"
+		losetup --detach "$LODEV"
 	done
 }
 trap on_exit EXIT
@@ -49,75 +49,80 @@ do
 done
 
 # Get loopback partitions
-LODEV="$(sudo losetup --find --show --partscan pop-os.img)"
+LODEV="$(losetup --find --show --partscan pop-os.img)"
 
 # Mount rootfs+efi partition
 mkdir -p mnt
-sudo mount -o rw "${LODEV}p2" mnt 2>&1| capture_and_log "mount rootfs"
-sudo mkdir -p mnt/boot/efi
-sudo mount -o rw "${LODEV}p1" mnt/boot/efi 2>&1| capture_and_log "mount efi"
-sudo mount --rbind --make-rslave /tmp mnt/tmp 2>&1| capture_and_log "mount /tmp"
-sudo mount --rbind --make-rslave /dev mnt/dev 2>&1| capture_and_log "mount /dev"
-sudo mount --rbind --make-rslave /proc mnt/proc 2>&1| capture_and_log "mount /proc"
-sudo mount --rbind --make-rslave /sys mnt/sys 2>&1| capture_and_log "mount /sys"
+mount -o rw "${LODEV}p2" mnt 2>&1| capture_and_log "mount rootfs"
+mkdir -p mnt/boot/efi
+mount -o rw "${LODEV}p1" mnt/boot/efi 2>&1| capture_and_log "mount efi"
+mount --rbind --make-rslave /tmp mnt/tmp 2>&1| capture_and_log "mount /tmp"
+mount --rbind --make-rslave /dev mnt/dev 2>&1| capture_and_log "mount /dev"
+mount --rbind --make-rslave /proc mnt/proc 2>&1| capture_and_log "mount /proc"
+mount --rbind --make-rslave /sys mnt/sys 2>&1| capture_and_log "mount /sys"
 
 # Sync extra files, if any, into rootfs
 if [ ! ${#EXTRAS[@]} -eq 0 ];
 then
 	for EXTRA in "${EXTRAS[@]}"; do
 		info "Copying '$EXTRA' into rootfs"
-		sudo rsync -arv "$EXTRA/" mnt/ 2>&1| capture_and_log "copy extra into rootfs"
+		rsync -arv "$EXTRA/" mnt/ 2>&1| capture_and_log "copy extra into rootfs"
 	done
 fi
 
 # Enter the rootfs
 cd mnt
 
+# Fix up fstab
+info "Filling in fstab"
+ROOTFS_UUID="$(blkid -s UUID -o value "${LODEV}p2")"
+sed -i "s/POP_UUID/${ROOTFS_UUID}/" etc/fstab
+EFI_UUID="$(blkid -s UUID -o value "${LODEV}p1")"
+sed -i "s/EFI_UUID/${EFI_UUID}/" etc/fstab
+
 # Run `apt update` in rootfs
-sudo bash -c "chroot . apt-get -y update" 2>&1| capture_and_log "apt update"
+bash -c "chroot . apt-get -y update" 2>&1| capture_and_log "apt update"
 
 # Ensure actual Pi packages (and snapd) are never installed
-sudo bash -c "chroot . apt-mark hold snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi" 2>&1| capture_and_log "hold packages"
+bash -c "chroot . apt-mark hold snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi" 2>&1| capture_and_log "hold packages"
 
 # Install any extra packages
 if [ ! ${#EXTRA_PKGS[@]} -eq 0 ];
 then
-	sudo bash -c "chroot . apt-get -y install ${EXTRA_PKGS[@]}" 2>&1| capture_and_log "install extra pkgs"
+	for pkg in ${EXTRA_PKGS[@]}; do
+		bash -c "chroot . apt-get -y install $pkg" 2>&1| capture_and_log "install $pkg"
+	done
 fi
 
-# Update the packages in rootfs
-sudo bash -c "chroot . apt-get -y dist-upgrade --allow-downgrades" 2>&1| capture_and_log "upgrade packages"
-
-# Install pop-desktop
-sudo bash -c "chroot . apt-get -y install pop-desktop" 2>&1| capture_and_log "install pop-desktop"
-
-# Install any extra packages
+# Install any extra debs
 if [ ! ${#EXTRA_DPKGS[@]} -eq 0 ];
 then
-	for dpkg in ${EXTRA_DPKGS[@]}; do
+	for deb in ${EXTRA_DPKGS[@]}; do
 		cd ..
-		sudo cp "$dpkg" mnt/extra.deb
+		cp "$deb" mnt/extra.deb
 		cd mnt
-		sudo bash -c "chroot . dpkg -i extra.deb" 2>&1| capture_and_log "install extra deb"
+		bash -c "chroot . dpkg -i extra.deb" 2>&1| capture_and_log "install extra deb"
 	done
-	sudo rm -f *.deb
+	rm -f *.deb
 fi
 
-# Clean up
-sudo bash -c "chroot . apt-get -y autoremove --purge" 2>&1| capture_and_log "apt autoremove"
-sudo bash -c "chroot . apt-get -y autoclean" 2>&1| capture_and_log "apt autoclean"
-sudo bash -c "chroot . apt-get -y clean" 2>&1| capture_and_log "apt clean"
+# Fix annoying bug
+mkdir -p usr/share/icons/Pop
 
-# Fix up fstab
-info "Filling in fstab"
-ROOTFS_UUID="$(sudo blkid -s UUID -o value "${LODEV}p2")"
-sudo sed -i "s/POP_UUID/${ROOTFS_UUID}/" etc/fstab
-EFI_UUID="$(sudo blkid -s UUID -o value "${LODEV}p1")"
-sudo sed -i "s/EFI_UUID/${EFI_UUID}/" etc/fstab
+# Update the packages in rootfs
+bash -c "chroot . apt-get -y dist-upgrade --allow-downgrades" 2>&1| capture_and_log "upgrade packages"
+
+# Install pop-desktop
+bash -c "chroot . apt-get -y install pop-desktop" 2>&1| capture_and_log "install pop-desktop"
+
+# Clean up
+bash -c "chroot . apt-get -y autoremove --purge" 2>&1| capture_and_log "apt autoremove"
+bash -c "chroot . apt-get -y autoclean" 2>&1| capture_and_log "apt autoclean"
+bash -c "chroot . apt-get -y clean" 2>&1| capture_and_log "apt clean"
 
 # Install systemd-boot
 info "Installing systemd-boot"
-sudo bash -c "chroot . bootctl install --no-variables --esp-path=/boot/efi" 2>&1| capture_and_log "bootctl install"
+bash -c "chroot . bootctl install --no-variables --esp-path=/boot/efi" 2>&1| capture_and_log "bootctl install"
 
 # Create systemd-boot entry
 info "Creating systemd-boot entry"
@@ -127,16 +132,16 @@ linux   /vmlinuz
 initrd  /initrd.img
 options root=UUID=${ROOTFS_UUID} rw quiet splash
 EOF
-sudo cp ../pop.conf boot/efi/loader/entries/Pop_OS-current.conf
-sudo rm ../pop.conf
+cp ../pop.conf boot/efi/loader/entries/Pop_OS-current.conf
+rm ../pop.conf
 
 info "Copying kernel and initrd to EFI"
 ACTUAL_VMLINUZ="boot/$(readlink boot/vmlinuz)"
 ACTUAL_INITRD="boot/$(readlink boot/initrd.img)"
-sudo cp "$ACTUAL_VMLINUZ" boot/efi/vmlinuz.gz
-sudo gzip -d boot/efi/vmlinuz.gz
-sudo cp "$ACTUAL_INITRD" boot/efi/initrd.img
+cp "$ACTUAL_VMLINUZ" boot/efi/vmlinuz.gz
+gzip -d boot/efi/vmlinuz.gz
+cp "$ACTUAL_INITRD" boot/efi/initrd.img
 
 # Enable first-boot service
 info "Enabling first-boot service"
-sudo bash -c "chroot . systemctl enable first-boot" 2>&1| capture_and_log "systemctl enable first-boot"
+bash -c "chroot . systemctl enable first-boot" 2>&1| capture_and_log "systemctl enable first-boot"

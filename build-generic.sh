@@ -11,6 +11,11 @@ if [[ -n "$IS_WSL" || -n "$WSL_DISTRO_NAME" ]]; then
 	fi
 fi
 
+if [[ "${EUID:-$(id -u)}" != 0 ]]; then
+	echo "This script must be run as root."
+	exit 1
+fi
+
 set -xe
 
 mkdir -p build

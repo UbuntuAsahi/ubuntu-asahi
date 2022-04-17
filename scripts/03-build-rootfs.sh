@@ -2,18 +2,19 @@
 set -e
 
 source $(dirname "$(readlink -f "$0")")/00-config.sh
+source $(dirname "$(readlink -f "$0")")/00-arm64-cross-compile.sh
 
 # Go back to starting dir on script exit
 STARTING_DIR="$PWD"
 trap "cd \"$STARTING_DIR\"" EXIT
 
 # Clean up old directories
-sudo rm -rf rootfs
+rm -rf rootfs
 
 # Bootstrap debian rootfs
-info "Bootstrapping Pop!_OS with qemu-debootstrap"
+info "Bootstrapping Pop!_OS with $DEBOOTSTRAP"
 mkdir -p cache
-sudo eatmydata qemu-debootstrap \
+eatmydata $DEBOOTSTRAP \
 		--arch=arm64 \
 		--cache-dir=`pwd`/cache \
 		--include initramfs-tools,apt \
@@ -23,8 +24,8 @@ sudo eatmydata qemu-debootstrap \
 
 cd rootfs
 
-sudo -- perl -p -i -e 's/root:x:/root::/' etc/passwd
+perl -p -i -e 's/root:x:/root::/' etc/passwd
 
 info "Linking systemd to init"
 # Link systemd to init.
-sudo -- ln -s lib/systemd/systemd init
+ln -s lib/systemd/systemd init

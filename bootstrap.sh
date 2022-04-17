@@ -72,10 +72,10 @@ build_rootfs()
 {
 (
         handle_crosscompile
-        sudo rm -rf testing
+        rm -rf testing
         mkdir -p cache
-        sudo update-binfmts --enable
-        sudo eatmydata qemu-debootstrap \
+        update-binfmts --enable
+        eatmydata qemu-debootstrap \
                 --arch=arm64 \
                 --cache-dir=`pwd`/cache \
                 --include initramfs-tools,apt,grub-efi-arm64 \
@@ -90,35 +90,35 @@ build_rootfs()
 
         cd testing
 
-        sudo mkdir -p boot/efi
+        mkdir -p boot/efi
 
-        sudo rsync \
+        rsync \
                 --recursive \
                 --verbose \
                 "../../fs/etc/" \
                 "etc/"
 
-        sudo bash -c 'chroot . apt update'
+        bash -c 'chroot . apt update'
 
 
         # Install kernel + linux-{system76,raspi} dummy packages
-        sudo cp -t . ../${KERNEL} ../${KERNEL_HEADERS} ../${KERNEL_LIBC} ../${DUMMY}
-        sudo chroot . dpkg -i ${KERNEL} ${KERNEL_HEADERS} ${KERNEL_LIBC} ${DUMMY}
-        sudo rm ${KERNEL} ${KERNEL_HEADERS} ${KERNEL_LIBC} ${DUMMY}
+        cp -t . ../${KERNEL} ../${KERNEL_HEADERS} ../${KERNEL_LIBC} ../${DUMMY}
+        chroot . dpkg -i ${KERNEL} ${KERNEL_HEADERS} ${KERNEL_LIBC} ${DUMMY}
+        rm ${KERNEL} ${KERNEL_HEADERS} ${KERNEL_LIBC} ${DUMMY}
 
         # Ensure actual Pi packages are never installed
-        sudo bash -c 'chroot . apt-mark hold snapd pop-desktop-raspi linux-raspi linux-firmware-raspi2 rpi-eeprom u-boot-rpi'
-        sudo bash -c 'chroot . apt -y dist-upgrade'
-        sudo bash -c 'chroot . apt -y install linux-firmware pop-desktop'
-        sudo bash -c 'chroot . apt -y autoremove'
-        sudo bash -c 'chroot . apt -y clean'
+        bash -c 'chroot . apt-mark hold snapd pop-desktop-raspi linux-raspi linux-firmware-raspi2 rpi-eeprom u-boot-rpi'
+        bash -c 'chroot . apt -y dist-upgrade'
+        bash -c 'chroot . apt -y install linux-firmware pop-desktop'
+        bash -c 'chroot . apt -y autoremove'
+        bash -c 'chroot . apt -y clean'
 
         # Disable sleep as Asahi doesn't handle that well at the moment
-        sudo bash -c 'chroot . systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
+        bash -c 'chroot . systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
 
-        sudo -- perl -p -i -e 's/root:x:/root::/' etc/passwd
+        perl -p -i -e 's/root:x:/root::/' etc/passwd
 
-        sudo -- ln -s lib/systemd/systemd init
+        ln -s lib/systemd/systemd init
 )
 }
 
@@ -130,10 +130,10 @@ build_dd()
         mkdir -p mnt
         mkfs.ext4 media
         tune2fs -O extents,uninit_bg,dir_index -m 0 -c 0 -i 0 media
-        sudo mount -o loop media mnt
-        sudo cp -a testing/* mnt/
-        sudo rm mnt/init
-        sudo umount mnt
+        mount -o loop media mnt
+        cp -a testing/* mnt/
+        rm mnt/init
+        umount mnt
         tar cf - media | pigz -9 > m1.tgz
 )
 }
@@ -194,7 +194,7 @@ then
 fi
 
 
-sudo apt install -y curl zip python3 equivs build-essential bash git locales gcc-aarch64-linux-gnu libc6-dev-arm64-cross device-tree-compiler imagemagick ccache eatmydata debootstrap pigz libncurses-dev qemu-user-static binfmt-support rsync git flex bison bc kmod cpio libncurses5-dev libelf-dev:native libssl-dev dwarves
+apt install -y curl zip python3 equivs build-essential bash git locales gcc-aarch64-linux-gnu libc6-dev-arm64-cross device-tree-compiler imagemagick ccache eatmydata debootstrap pigz libncurses-dev qemu-user-static binfmt-support rsync git flex bison bc kmod cpio libncurses5-dev libelf-dev:native libssl-dev dwarves
 
 build_linux
 build_m1n1
