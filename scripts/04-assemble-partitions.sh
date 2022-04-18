@@ -20,7 +20,7 @@ trap on_exit EXIT
 rm -f pop-os.img
 
 info "Allocating Pop!_OS image file"
-fallocate --verbose --length 7GiB pop-os.img 2>&1| capture_and_log "allocate pop-os.img"
+fallocate --verbose --length 8GiB pop-os.img 2>&1| capture_and_log "allocate pop-os.img"
 
 info "Setting up partition table"
 parted pop-os.img mktable gpt 2>&1| capture_and_log "create gpt table"

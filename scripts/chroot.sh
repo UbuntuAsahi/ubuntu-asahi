@@ -45,6 +45,10 @@ done
 
 apt-get --yes install pop-desktop 2>&1| capture_and_log "install pop-desktop"
 apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
+
+info "Cleaning up old boot files"
+rm -rf /boot/efi/EFI/{Pop_OS,Ubuntu}-
+
 apt-get --yes autoremove --purge 2>&1| capture_and_log "apt autoremove"
 apt-get --yes autoclean 2>&1| capture_and_log "apt autoclean"
 apt-get --yes clean 2>&1| capture_and_log "apt clean"
@@ -72,5 +76,5 @@ cp "$ACTUAL_INITRD" /boot/efi/initrd.img
 info "Enabling first-boot service"
 systemctl enable first-boot 2>&1| capture_and_log "systemctl enable first-boot"
 
-info "Cleaning up old boot files"
-rm -rf /boot/efi/EFI/{Pop_OS,Ubuntu}-
+info "Creating missing NetworkManager config"
+touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
