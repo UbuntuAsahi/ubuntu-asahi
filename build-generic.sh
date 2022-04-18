@@ -24,4 +24,4 @@ cd build
 ../scripts/03-build-rootfs.sh
 ../scripts/04-assemble-partitions.sh
 ../scripts/05-copy-rootfs.sh
-../scripts/06-rootfs-setup.sh --pkg=linux-image-generic --pkg=kernelstub --dpkg=linux-pop-arm64-dummy_5.17.0_all.deb --extra=../fs/common
+../scripts/06-rootfs-setup.sh --pkg=kernelstub --deb=linux-pop-arm64-dummy_5.17.0_all.deb --extra=../fs/common

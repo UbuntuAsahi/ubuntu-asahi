@@ -17,9 +17,9 @@ mkdir -p cache
 eatmydata $DEBOOTSTRAP \
 		--arch=arm64 \
 		--cache-dir=`pwd`/cache \
-		--include initramfs-tools,apt \
+		--include apt,initramfs-tools,linux-image-generic \
 		jammy \
-		rootfs \
+		`pwd`/rootfs \
 		http://ports.ubuntu.com/ubuntu-ports 2>&1| capture_and_log "bootstrap pop"
 
 cd rootfs

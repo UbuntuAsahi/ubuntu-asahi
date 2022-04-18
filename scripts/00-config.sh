@@ -37,6 +37,9 @@ function capture_and_log {
 	done
 }
 
+# Source: https://stackoverflow.com/a/17841619
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
 if [[ "$(uname -p)" -ne "aarch64" ]]; then
 	update-binfmts --enable
 fi
