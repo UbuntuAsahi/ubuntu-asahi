@@ -32,6 +32,17 @@ for deb in /*.deb; do
 	rm -f "$deb"
 done
 
+# Work around pop-icon-theme bug
+SIZES=("8x8" "16x16" "24x24" "32x32" "48x48" "64x64" "128x128" "256x256" "512x512")
+SCALES=('@2x')
+for SCALE in "${SCALES[@]}"
+do
+	for SIZE in "${SIZES[@]}"
+	do
+		mkdir -p "/usr/share/icons/Pop/${SIZE}${SCALE}"
+	done
+done
+
 apt-get --yes install pop-desktop 2>&1| capture_and_log "install pop-desktop"
 apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
 apt-get --yes autoremove --purge 2>&1| capture_and_log "apt autoremove"

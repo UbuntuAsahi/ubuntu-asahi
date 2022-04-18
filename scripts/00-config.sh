@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [[ "${EUID:-$(id -u)}" != 0 ]]; then
-	echo "This script must be run as root."
-	exit 1
-fi
-
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")
 _YELLOW=$(tput setaf 3 || "")
@@ -36,6 +31,11 @@ function capture_and_log {
 		echo "${PREFIX}${IN}${SUFFIX}"
 	done
 }
+
+if [[ "${EUID:-$(id -u)}" != 0 ]]; then
+	error "This script must be run as root."
+	exit 1
+fi
 
 # Source: https://stackoverflow.com/a/17841619
 function join_by { local IFS="$1"; shift; echo "$*"; }
