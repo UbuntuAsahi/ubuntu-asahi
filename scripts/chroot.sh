@@ -71,3 +71,6 @@ cp "$ACTUAL_INITRD" /boot/efi/initrd.img
 
 info "Enabling first-boot service"
 systemctl enable first-boot 2>&1| capture_and_log "systemctl enable first-boot"
+
+info "Cleaning up old boot files"
+rm -rf /boot/efi/EFI/{Pop_OS,Ubuntu}-
