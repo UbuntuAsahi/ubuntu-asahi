@@ -10,10 +10,6 @@ function on_exit() {
 	sync
 	umount -Rf mnt
 	rm -rf mnt
-	losetup --associated pop-os.img | cut -d ':' -f1 | while read LODEV
-	do
-		losetup --detach "$LODEV"
-	done
 }
 trap on_exit EXIT
 
@@ -23,7 +19,7 @@ LODEV="$(losetup --find --show --partscan pop-os.img)"
 # Mount!
 info "Mounting rootfs.img"
 mkdir -p mnt
-mount -o rw "${LODEV}p2" mnt 2>&1| capture_and_log "mount rootfs.img"
+mount -o loop,rw "${BUILD}/rootfs.img" mnt 2>&1| capture_and_log "mount rootfs.img"
 
 # Rsync rootfs to mnt
 info "Copying rootfs to mounted rootfs.img"

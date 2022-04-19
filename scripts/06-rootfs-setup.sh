@@ -11,10 +11,6 @@ function on_exit() {
 	sync
 	umount -Rf mnt
 	rm -rf mnt
-	losetup --associated pop-os.img | cut -d ':' -f1 | while read LODEV
-	do
-		losetup --detach "$LODEV"
-	done
 }
 trap on_exit EXIT
 
@@ -54,9 +50,9 @@ LODEV="$(losetup --find --show --partscan pop-os.img)"
 
 # Mount rootfs+efi partition
 mkdir -p mnt
-mount -o rw "${LODEV}p2" mnt 2>&1| capture_and_log "mount rootfs"
+mount -o loop,rw "${BUILD}/rootfs.img" mnt 2>&1| capture_and_log "mount rootfs"
 mkdir -p mnt/boot/efi
-mount -o rw "${LODEV}p1" mnt/boot/efi 2>&1| capture_and_log "mount efi"
+mount -o loop,rw "${BUILD}/efi.img" mnt/boot/efi 2>&1| capture_and_log "mount efi"
 
 # Sync extra files, if any, into rootfs
 if [ ! ${#EXTRAS[@]} -eq 0 ];
@@ -73,8 +69,8 @@ done
 join_by "\n" "${EXTRA_PKGS[@]}" > mnt/packages
 cp -f "$SCRIPTS_DIR/00-config.sh" mnt
 cp -f "$SCRIPTS_DIR/chroot.sh" mnt
-blkid -s UUID -o value "${LODEV}p2" > mnt/rootfs.uuid
-blkid -s UUID -o value "${LODEV}p1" > mnt/efi.uuid
+blkid -s UUID -o value "${BUILD}/rootfs.img" > mnt/rootfs.uuid
+blkid -s UUID -o value "${BUILD}/efi.img" > mnt/efi.uuid
 
 systemd-nspawn \
 	--machine=pop-os \

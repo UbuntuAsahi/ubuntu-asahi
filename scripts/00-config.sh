@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BUILD="$(dirname "$(readlink -f "$0")")/../build"
+
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")
 _YELLOW=$(tput setaf 3 || "")

@@ -78,3 +78,10 @@ systemctl enable first-boot 2>&1| capture_and_log "systemctl enable first-boot"
 
 info "Creating missing NetworkManager config"
 touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+
+info "Updating AppStream cache"
+/usr/bin/appstreamcli refresh-cache --force 2>&1 | capture_and_log "update appstream cache"
+
+touch "Cleaning up data..."
+rm -rf /tmp/*
+rm -f /var/lib/dbus/machine-id
