@@ -1,6 +1,13 @@
 #!/bin/bash
 
-BUILD="$(dirname "$(readlink -f "$0")")/../build"
+SCRIPTS_DIR="$(dirname "$(readlink -f "$0")")"
+BUILD_DIR="${SCRIPTS_DIR}/../build"
+CACHE_DIR="${BUILD_DIR}/cache"
+ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"
+ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
+ROOTFS_IMG="${BUILD_DIR}/rootfs.img"
+EFI_IMG="${BUILD_DIR}/efi.img"
+ROOTFS_SQUASHED="${BUILD_DIR}/rootfs.squashfs"
 
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")

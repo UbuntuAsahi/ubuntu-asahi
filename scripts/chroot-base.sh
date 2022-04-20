@@ -4,44 +4,22 @@ set -e
 source /00-config.sh
 rm -f /00-config.sh
 
-info "Fixing DNS"
 if [ ! -f /run/systemd/resolve/stub-resolv.conf ]
 then
+	info "Fixing DNS"
     mkdir -p /run/systemd/resolve
     echo "nameserver 1.1.1.1" > /run/systemd/resolve/stub-resolv.conf
 fi
 
-info "Filling in /etc/fstab"
-ROOTFS_UUID=$(cat /rootfs.uuid)
-EFI_UUID=$(cat /efi.uuid)
-sed -i "s/POP_UUID/${ROOTFS_UUID}/" /etc/fstab
-sed -i "s/EFI_UUID/${EFI_UUID}/" /etc/fstab
-rm -f /rootfs.uuid /efi.uuid
+#info "Filling in /etc/fstab"
+#ROOTFS_UUID=$(cat /rootfs.uuid)
+#EFI_UUID=$(cat /efi.uuid)
+#sed -i "s/POP_UUID/${ROOTFS_UUID}/" /etc/fstab
+#sed -i "s/EFI_UUID/${EFI_UUID}/" /etc/fstab
+#rm -f /rootfs.uuid /efi.uuid
 
 apt-get --yes update 2>&1| capture_and_log "apt update"
 apt-mark hold snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi 2>&1| capture_and_log "hold packages"
-
-while read pkg; do 
-	apt-get install --yes "$pkg" 2>&1| capture_and_log "install $pkg"
-done < /packages
-rm -f /packages
-
-for deb in /*.deb; do
-	deb_name=$(basename "$deb")
-	dpkg --install "$deb" 2>&1| capture_and_log "install $deb_name"
-	rm -f "$deb"
-done
-
-# Work around pop-icon-theme bug
-SIZES=("8x8" "16x16" "24x24" "32x32" "48x48" "64x64" "128x128" "256x256" "512x512")
-SCALES=('@2x')
-for SCALE in "${SCALES[@]}"
-do
-	for SIZE in "${SIZES[@]}"
-	do
-		mkdir -p "/usr/share/icons/Pop/${SIZE}${SCALE}"
-	done
-done
 
 apt-get --yes install pop-desktop 2>&1| capture_and_log "install pop-desktop"
 apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
@@ -55,6 +33,9 @@ apt-get --yes clean 2>&1| capture_and_log "apt clean"
 
 info "Installing systemd-boot"
 bootctl install --no-variables --esp-path=/boot/efi 2>&1| capture_and_log "bootctl install"
+
+info "Installing kernelstub"
+apt-get --yes install kernelstub 2>&1| capture_and_log "install kernelstub"
 
 info "Creating systemd-boot entry"
 cat <<EOF >> /boot/efi/loader/entries/Pop_OS-current.conf
