@@ -20,3 +20,5 @@ systemd-nspawn \
 	--resolv-conf=off \
 	--directory="${ROOTFS_LIVE_DIR}" \
 	bash /chroot-live.sh
+
+rm -f "${ROOTFS_LIVE_DIR}/chroot-live.sh"

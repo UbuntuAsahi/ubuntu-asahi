@@ -16,3 +16,5 @@ systemd-nspawn \
 	--resolv-conf=off \
 	--directory="${ROOTFS_BASE_DIR}" \
 	bash /chroot-base.sh
+
+rm -f "${ROOTFS_BASE_DIR}/chroot-base.sh"
