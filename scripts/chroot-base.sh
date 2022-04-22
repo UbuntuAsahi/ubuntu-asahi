@@ -32,7 +32,9 @@ if [ ${#HOLD_PKGS[@]} -ne 0 ]; then
 fi
 
 # We're going to install the primary distro packages - pop-desktop and friends - now.
-apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install pop-desktop"
+if [ ${#DISTRO_PKGS[@]} -ne 0 ]; then
+    apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install pop-desktop"
+fi
 
 # Upgrade all packages.
 apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
