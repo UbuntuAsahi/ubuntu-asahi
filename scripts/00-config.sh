@@ -5,7 +5,8 @@ UBUNTU_VERSION=22.04
 UBUNTU_CODE=jammy
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
-LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper)
+#LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper)
+LIVE_PKGS=(casper expect gparted)
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui pop-installer-session snapd ubuntu-session ubuntu-wallpapers unattended-upgrades xul-ext-ubufox yaru-theme-gnome-shell)
 MAIN_POOL=(at dfu-programmer efibootmgr ethtool kernelstub libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd system76-wallpapers xbacklight)
 
