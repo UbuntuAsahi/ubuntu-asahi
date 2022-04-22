@@ -11,9 +11,15 @@ trap "cd \"${STARTING_DIR}\"" EXIT
 # Clean up old directories
 rm -rf "${ROOTFS_BASE_DIR}"
 
-# Bootstrap debian rootfs
 info "Bootstrapping Pop!_OS with $DEBOOTSTRAP"
 mkdir -p cache
+
+# This is where we actually CREATE our initial Pop!_OS system.
+# debootstrap will fetch all the necessary packages for a base Debian/Ubuntu system,
+# and install them fresh into our new rootfs directory, which we can later chroot into.
+# 
+# eatmydata is just there to speed things up, as apt/dpkg LOVES to constantly fsync during
+# EVERY. SINGLE. PACKAGE.
 eatmydata $DEBOOTSTRAP \
 		--arch=arm64 \
 		--cache-dir="${CACHE_DIR}" \
@@ -22,7 +28,12 @@ eatmydata $DEBOOTSTRAP \
 		"${ROOTFS_BASE_DIR}" \
 		http://ports.ubuntu.com/ubuntu-ports 2>&1| capture_and_log "bootstrap pop"
 
+# Since we suppressed all fsyncs during the bootstrap, we need to do them now.
+sync "${ROOTFS_BASE_DIR}"/**/*
+
 perl -p -i -e 's/root:x:/root::/' "${ROOTFS_BASE_DIR}/etc/passwd"
 
+# In order for the system to actually boot, we need to link systemd to /init,
+# which is the kernel's default path for the init program.
 info "Linking systemd to init"
 ln -s lib/systemd/systemd "${ROOTFS_BASE_DIR}/init"

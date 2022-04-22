@@ -7,9 +7,15 @@ source $(dirname "$(readlink -f "$0")")/00-config.sh
 STARTING_DIR="$PWD"
 trap "cd \"${STARTING_DIR}\"" EXIT
 
+# We copy the config script and the chroot script into the rootfs,
+# as we are getting ready to run them inside our rootfs.
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_BASE_DIR}"
 cp -f "${SCRIPTS_DIR}/chroot-base.sh" "${ROOTFS_BASE_DIR}"
 
+# Alright, here's the fun part!
+# systemd-nspawn is basically chroot, however it'll automatically
+# set up all the /dev, /sys, /proc, etc mounts for us, and even
+# run a fully functioning systemd within the chroot.
 info "Spawning chroot via systemd-nspawn"
 systemd-nspawn \
 	--machine=pop-os \
