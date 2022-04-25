@@ -11,7 +11,10 @@ then
     echo "nameserver 1.1.1.1" > /run/systemd/resolve/stub-resolv.conf
 fi
 
+rm -f /etc/resolv.conf
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+
 apt-get --yes update 2>&1| capture_and_log "apt update"
-apt-get --yes install casper distinst \
-	expect gparted pop-installer pop-installer-casper \
-	pop-shop-casper 2>&1 capture_and_log "install live utilities"
+if [ ${#LIVE_PKGS[@]} -ne 0 ]; then
+    apt-get --yes install ${LIVE_PKGS[@]} 2>&1| capture_and_log "install live utilities"
+fi

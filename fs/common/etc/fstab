@@ -1,2 +1,2 @@
-UUID=POP_UUID		/			ext4	defaults,x-systemd.growfs	0	0
-UUID=EFI_UUID		/boot/efi	vfat	defaults					0	1
+LABEL=Pop!_Live		/			ext4	defaults,x-systemd.growfs	0	0
+Label=EFILIVE		/boot/efi	vfat	defaults					0	1

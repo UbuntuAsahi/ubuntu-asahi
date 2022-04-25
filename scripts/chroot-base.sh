@@ -61,7 +61,7 @@ cat <<EOF >> /boot/efi/loader/entries/Pop_OS-current.conf
 title   Pop!_OS
 linux   /vmlinuz
 initrd  /initrd.img
-options root=UUID=${ROOTFS_UUID} rw quiet splash
+options root=LABEL=Pop!_Live rw quiet splash
 EOF
 
 # systemd-boot on arm64 doesn't support compressed kernels,
@@ -71,8 +71,8 @@ ACTUAL_VMLINUZ="/boot/$(readlink /boot/vmlinuz)"
 ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
 cp "$ACTUAL_VMLINUZ" /tmp/vmlinuz.gz
 gzip -d /tmp/vmlinuz.gz
-sudo cp -f /tmp/vmlinuz /boot/efi/vmlinuz
-sudo rm -f /tmp/vmlinuz
+cp -f /tmp/vmlinuz /boot/efi/vmlinuz
+rm -f /tmp/vmlinuz
 cp "$ACTUAL_INITRD" /boot/efi/initrd.img
 
 # This is just stuff we run on the first-boot.
@@ -81,13 +81,10 @@ systemctl enable first-boot 2>&1| capture_and_log "systemctl enable first-boot"
 
 # Dunno what this does, honestly.
 info "Creating missing NetworkManager config"
+mkdir -p /etc/NetworkManager/conf.d/
 touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
 
-# Self-explanatory.
-info "Updating AppStream cache"
-/usr/bin/appstreamcli refresh-cache --force 2>&1 | capture_and_log "update appstream cache"
-
 # Clean up any left-behind crap, such as tempfiles and machine-id.
-touch "Cleaning up data..."
+info "Cleaning up data..."
 rm -rf /tmp/*
 rm -f /var/lib/dbus/machine-id

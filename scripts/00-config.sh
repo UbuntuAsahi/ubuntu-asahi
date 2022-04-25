@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
-UBUNTU_VERSION=22.04
+DISTRO_NAME=pop-os
+DISTRO_VERSION=22.04
 UBUNTU_CODE=jammy
+DISTRO_VOLUME_LABEL="Pop!_OS ${DISTRO_VERSION} arm64"
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
 #LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper)
@@ -11,16 +13,24 @@ HOLD_PKGS=(snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi)
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui pop-installer-session snapd ubuntu-session ubuntu-wallpapers unattended-upgrades xul-ext-ubufox yaru-theme-gnome-shell)
 MAIN_POOL=(at dfu-programmer efibootmgr ethtool kernelstub libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd system76-wallpapers xbacklight)
 
-SCRIPTS_DIR="$(dirname "$(readlink -f "$0")")"
+SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
 BUILD_DIR="${SCRIPTS_DIR}/../build"
 CACHE_DIR="${BUILD_DIR}/cache"
+
+FS_DIR="${SCRIPTS_DIR}/../fs"
+FS_COMMON_DIR="${FS_DIR}/common"
 
 ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"
 ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
 
 ROOTFS_IMG="${BUILD_DIR}/rootfs.img"
 EFI_IMG="${BUILD_DIR}/efi.img"
-ROOTFS_SQUASHED="${BUILD_DIR}/rootfs.squashfs"
+
+ISO_DIR="${BUILD_DIR}/iso"
+ISO_CASPER_DIR="${ISO_DIR}/casper_${DISTRO_NAME}_${DISTRO_VERSION}"
+ISO_FILESYSTEM_SIZE_TAG="${ISO_CASPER_DIR}/filesystem.size"
+ISO_ROOTFS_SQUASHED="${ISO_CASPER_DIR}/filesystem.squashfs"
+ISO_OUT="${BUILD_DIR}/pop.iso"
 
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")

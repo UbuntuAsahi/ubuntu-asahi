@@ -29,7 +29,14 @@ eatmydata $DEBOOTSTRAP \
 		http://ports.ubuntu.com/ubuntu-ports 2>&1| capture_and_log "bootstrap pop"
 
 # Since we suppressed all fsyncs during the bootstrap, we need to do them now.
-sync "${ROOTFS_BASE_DIR}"/**/*
+info "Syncing data to filesystem"
+sync
+
+info "Syncing common files to rootfs"
+rsync -arv "${FS_COMMON_DIR}/" "${ROOTFS_BASE_DIR}/" 2>&1| capture_and_log "rsync common files"
+
+# Create ESP dir, to be mounted later
+mkdir -p "${ROOTFS_BASE_DIR}/boot/efi"
 
 perl -p -i -e 's/root:x:/root::/' "${ROOTFS_BASE_DIR}/etc/passwd"
 

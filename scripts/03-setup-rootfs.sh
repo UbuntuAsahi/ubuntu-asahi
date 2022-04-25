@@ -1,16 +1,24 @@
 #!/bin/bash
 set -e
 
-source $(dirname "$(readlink -f "$0")")/00-config.sh
+source "$(dirname "$(readlink -f "$0")")/00-config.sh"
 
 # Go back to starting dir on script exit
 STARTING_DIR="$PWD"
-trap "cd \"${STARTING_DIR}\"" EXIT
+function cleanup {
+	cd "${STARTING_DIR}"
+	umount -Rf "${ROOTFS_BASE_DIR}/boot/efi"
+}
+trap cleanup EXIT
 
 # We copy the config script and the chroot script into the rootfs,
 # as we are getting ready to run them inside our rootfs.
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_BASE_DIR}"
 cp -f "${SCRIPTS_DIR}/chroot-base.sh" "${ROOTFS_BASE_DIR}"
+
+# Mount the EFI system partition
+info "Mounting EFI partition"
+mount -o loop,rw "${EFI_IMG}" "${ROOTFS_BASE_DIR}/boot/efi"
 
 # Alright, here's the fun part!
 # systemd-nspawn is basically chroot, however it'll automatically
