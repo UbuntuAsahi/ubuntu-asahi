@@ -53,16 +53,7 @@ apt-get --yes clean 2>&1| capture_and_log "apt clean"
 
 # We need to install the systemd-boot EFI bootloader.
 info "Installing systemd-boot"
-bootctl install --no-variables --esp-path=/boot/efi 2>&1| capture_and_log "bootctl install"
-
-# Now, we'll create a systemd-boot entry for our kernel.
-info "Creating systemd-boot entry"
-cat <<EOF >> /boot/efi/loader/entries/Pop_OS-current.conf
-title   Pop!_OS
-linux   /vmlinuz
-initrd  /initrd.img
-options root=LABEL=Pop!_Live rw quiet splash
-EOF
+env SYSTEMD_RELAX_ESP_CHECKS=1 bootctl install --no-variables --esp-path=/boot/efi 2>&1| capture_and_log "bootctl install"
 
 # systemd-boot on arm64 doesn't support compressed kernels,
 # so we have to un-gzip vmlinuz, and then copy it back to the ESP.
@@ -73,11 +64,7 @@ cp "$ACTUAL_VMLINUZ" /tmp/vmlinuz.gz
 gzip -d /tmp/vmlinuz.gz
 cp -f /tmp/vmlinuz /boot/efi/vmlinuz
 rm -f /tmp/vmlinuz
-cp "$ACTUAL_INITRD" /boot/efi/initrd.img
-
-# This is just stuff we run on the first-boot.
-info "Enabling first-boot service"
-systemctl enable first-boot 2>&1| capture_and_log "systemctl enable first-boot"
+cp -f "$ACTUAL_INITRD" /boot/efi/initrd.img
 
 # Dunno what this does, honestly.
 info "Creating missing NetworkManager config"

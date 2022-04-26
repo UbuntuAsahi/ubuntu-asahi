@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Check to ensure that, if we're in WSL2, we're using systemd,
 # as otherwise the rootfs setup will generate an invalid grub
@@ -20,8 +21,8 @@ set -xe
 
 mkdir -p build
 cd build
-../scripts/02-build-dummy.sh
-../scripts/03-build-rootfs.sh
-../scripts/04-assemble-partitions.sh
-../scripts/05-copy-rootfs.sh
-../scripts/06-rootfs-setup.sh --pkg=kernelstub --deb=linux-pop-arm64-dummy_5.17.0_all.deb --extra=../fs/common
+../scripts/01-setup-efi-img.sh
+../scripts/02-build-base-rootfs.sh
+../scripts/03-setup-rootfs.sh
+../scripts/live/04-setup-live-rootfs.sh
+../scripts/live/05-build-live-image.sh

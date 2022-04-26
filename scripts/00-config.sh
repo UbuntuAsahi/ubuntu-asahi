@@ -19,18 +19,18 @@ CACHE_DIR="${BUILD_DIR}/cache"
 
 FS_DIR="${SCRIPTS_DIR}/../fs"
 FS_COMMON_DIR="${FS_DIR}/common"
+FS_LIVE_EFI_DIR="${FS_DIR}/live-efi"
 
 ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"
 ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
 
-ROOTFS_IMG="${BUILD_DIR}/rootfs.img"
-EFI_IMG="${BUILD_DIR}/efi.img"
+IMG_FILE="${BUILD_DIR}/pop-os.img"
 
-ISO_DIR="${BUILD_DIR}/iso"
-ISO_CASPER_DIR="${ISO_DIR}/casper_${DISTRO_NAME}_${DISTRO_VERSION}"
-ISO_FILESYSTEM_SIZE_TAG="${ISO_CASPER_DIR}/filesystem.size"
-ISO_ROOTFS_SQUASHED="${ISO_CASPER_DIR}/filesystem.squashfs"
-ISO_OUT="${BUILD_DIR}/pop.iso"
+CASPER_NAME="casper_${DISTRO_NAME}_${DISTRO_VERSION}"
+IMG_MNT_DIR="${BUILD_DIR}/mnt"
+IMG_CASPER_DIR="${IMG_MNT_DIR}/${CASPER_NAME}"
+IMG_FILESYSTEM_SIZE_TAG="${IMG_CASPER_DIR}/filesystem.size"
+IMG_ROOTFS_SQUASHED="${IMG_CASPER_DIR}/filesystem.squashfs"
 
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")

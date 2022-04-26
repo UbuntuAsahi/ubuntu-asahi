@@ -6,7 +6,10 @@ source "${SCRIPTS_DIR}/00-arm64-cross-compile.sh"
 
 # Go back to starting dir on script exit
 STARTING_DIR="$PWD"
-trap "cd \"${STARTING_DIR}\"" EXIT
+function cleanup {
+	cd "$STARTING_DIR"
+}
+trap cleanup EXIT
 
 # Clean up old directories
 rm -rf "${ROOTFS_BASE_DIR}"

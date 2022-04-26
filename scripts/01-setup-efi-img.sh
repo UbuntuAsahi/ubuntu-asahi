@@ -3,9 +3,26 @@ set -e
 
 source "$(dirname "$(readlink -f "$0")")/00-config.sh"
 
-# Allocate a 512MiB EFI partition in efi.img
-info "Allocating 512MiB efi.img"
-fallocate -l 512M "${EFI_IMG}"
+function cleanup {
+	losetup --associated "${IMG_FILE}" | cut -d ':' -f1 | while read LODEV
+	do
+		sudo losetup --detach "$LODEV"
+	done
+}
+trap cleanup EXIT
 
-info "Creating FAT32 EFI partition in efi.img"
-mkfs.vfat -F 32 -n "EFILIVE" "${EFI_IMG}"
+# Allocate a 4GiB image file
+fallocate -l 4G "${IMG_FILE}"
+
+# Create a 4GiB partition
+parted -s "${IMG_FILE}" mklabel gpt
+parted -s "${IMG_FILE}" mkpart primary fat32 1MiB 100%
+parted -s "${IMG_FILE}" set 1 esp on
+
+# Create a loop device for the image file
+LOOP_DEV=$(losetup --find --show --partscan "${IMG_FILE}")
+
+# Create a filesystem on the loop device
+mkfs.vfat -F32 "${LOOP_DEV}p1"
+
+

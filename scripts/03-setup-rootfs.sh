@@ -8,6 +8,10 @@ STARTING_DIR="$PWD"
 function cleanup {
 	cd "${STARTING_DIR}"
 	umount -Rf "${ROOTFS_BASE_DIR}/boot/efi"
+	losetup --associated "${IMG_FILE}" | cut -d ':' -f1 | while read LODEV
+	do
+		sudo losetup --detach "$LODEV"
+	done
 }
 trap cleanup EXIT
 
@@ -18,7 +22,8 @@ cp -f "${SCRIPTS_DIR}/chroot-base.sh" "${ROOTFS_BASE_DIR}"
 
 # Mount the EFI system partition
 info "Mounting EFI partition"
-mount -o loop,rw "${EFI_IMG}" "${ROOTFS_BASE_DIR}/boot/efi"
+LOOP_DEV=$(losetup --find --show --partscan "${IMG_FILE}")
+mount "${LOOP_DEV}p1" "${ROOTFS_BASE_DIR}/boot/efi"
 
 # Alright, here's the fun part!
 # systemd-nspawn is basically chroot, however it'll automatically
