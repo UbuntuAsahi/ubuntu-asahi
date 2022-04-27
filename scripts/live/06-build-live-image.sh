@@ -24,6 +24,10 @@ LOOP_DEV=$(losetup --find --show --partscan "${IMG_FILE}")
 mount "${LOOP_DEV}p1" "${MNT_DIR}"
 mkdir -p "${CASPER_DIR}"
 
+info "Creating filesystem manifests"
+cp "${CHROOT_MANIFEST}" "${CASPER_DIR}/filesystem.manifest"
+grep -F -x -v -f "${CHROOT_MANIFEST}" "${LIVE_MANIFEST}" | cut -f1 > "${CASPER_DIR}/filesystem.manifest-remove"
+
 info "Calculating filesystem size"
 du -sx --block-size=1 "${ROOTFS_LIVE_DIR}" | cut -f1 > "${FILESYSTEM_SIZE_TAG}"
 

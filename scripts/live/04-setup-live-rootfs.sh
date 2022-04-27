@@ -31,6 +31,7 @@ rsync -rv "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/iso/"
 
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_LIVE_DIR}"
 cp -f "${SCRIPTS_DIR}/live/chroot-live.sh" "${ROOTFS_LIVE_DIR}"
+cp -f ../../*.deb "${ROOTFS_LIVE_DIR}"
 
 info "Spawning chroot via systemd-nspawn"
 systemd-nspawn \
@@ -39,4 +40,6 @@ systemd-nspawn \
 	--directory="${ROOTFS_LIVE_DIR}" \
 	bash /chroot-live.sh
 
+cp -f "${ROOTFS_LIVE_DIR}/manifest" "${LIVE_MANIFEST}"
 rm -rf "${ROOTFS_LIVE_DIR}/chroot-live.sh"
+rm -f "${ROOTFS_LIVE_DIR}/manifest"

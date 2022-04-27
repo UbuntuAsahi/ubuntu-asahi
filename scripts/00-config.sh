@@ -9,7 +9,7 @@ GNOME_INITIAL_SETUP_STAMP=21.04
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
 #LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper)
-LIVE_PKGS=(casper expect gparted)
+LIVE_PKGS=(casper expect gparted lldb-13)
 HOLD_PKGS=(snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi)
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui pop-installer-session snapd ubuntu-session ubuntu-wallpapers unattended-upgrades xul-ext-ubufox yaru-theme-gnome-shell)
 MAIN_POOL=(at dfu-programmer efibootmgr ethtool kernelstub libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd system76-wallpapers xbacklight)
@@ -26,6 +26,9 @@ FS_POOL_DIR="${FS_DIR}/pool"
 
 ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"
 ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
+
+CHROOT_MANIFEST="${BUILD_DIR}/chroot.manifest"
+LIVE_MANIFEST="${BUILD_DIR}/live.manifest"
 
 IMG_FILE="${BUILD_DIR}/pop-os.img"
 

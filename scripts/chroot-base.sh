@@ -79,6 +79,9 @@ info "Creating missing NetworkManager config"
 mkdir -p /etc/NetworkManager/conf.d/
 touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
 
+info "Creating base filesystem manifest"
+dpkg-query -W --showformat='${Package}\t${Version}\n' > /manifest
+
 # Clean up any left-behind crap, such as tempfiles and machine-id.
 info "Cleaning up data..."
 rm -rf /tmp/*

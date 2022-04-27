@@ -36,4 +36,6 @@ systemd-nspawn \
 	--directory="${ROOTFS_BASE_DIR}" \
 	bash /chroot-base.sh
 
+cp -f "${ROOTFS_BASE_DIR}/manifest" "${CHROOT_MANIFEST}"
 rm -f "${ROOTFS_BASE_DIR}/chroot-base.sh"
+rm -f "${ROOTFS_BASE_DIR}/manifest"

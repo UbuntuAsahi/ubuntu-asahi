@@ -21,9 +21,21 @@ if [ ${#MAIN_POOL[@]} -ne 0 ]; then
     popd
 fi
 
+apt-get --yes install /*.deb
+rm -f /*.deb
+
 info "Copying new initrd to /iso"
 ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
 cp -f "$ACTUAL_INITRD" /iso/initrd.img
+
+info "Setting up casper scripts"
+rm -f /usr/share/initramfs-tools/scripts/casper-bottom/01integrity_check
+sed -i \
+		"s|touch /root/home/\$USERNAME/.config/gnome-initial-setup-done|echo -n \"${GNOME_INITIAL_SETUP_STAMP}\" > /root/home/\$USERNAME/.config/gnome-initial-setup-done|" \
+		/usr/share/initramfs-tools/scripts/casper-bottom/52gnome_initial_setup
+
+info "Creating live filesystem manifest"
+dpkg-query -W --showformat='${Package}\t${Version}\n' > /manifest
 
 # Clean up any left-behind crap, such as tempfiles and machine-id.
 info "Cleaning up data..."
