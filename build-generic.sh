@@ -1,6 +1,4 @@
 #!/bin/bash
-set -e
-
 # Check to ensure that, if we're in WSL2, we're using systemd,
 # as otherwise the rootfs setup will generate an invalid grub
 # config due to the lack of /dev/disk.
@@ -25,4 +23,5 @@ cd build
 ../scripts/02-build-base-rootfs.sh
 ../scripts/03-setup-rootfs.sh
 ../scripts/live/04-setup-live-rootfs.sh
-../scripts/live/05-build-live-image.sh
+../scripts/live/05-setup-pool.sh
+../scripts/live/06-build-live-image.sh
