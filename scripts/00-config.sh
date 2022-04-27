@@ -5,6 +5,7 @@ DISTRO_NAME=pop-os
 DISTRO_VERSION=22.04
 UBUNTU_CODE=jammy
 DISTRO_VOLUME_LABEL="Pop!_OS ${DISTRO_VERSION} arm64"
+GNOME_INITIAL_SETUP_STAMP=21.04
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
 #LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper)
@@ -12,14 +13,16 @@ LIVE_PKGS=(casper expect gparted)
 HOLD_PKGS=(snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi)
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui pop-installer-session snapd ubuntu-session ubuntu-wallpapers unattended-upgrades xul-ext-ubufox yaru-theme-gnome-shell)
 MAIN_POOL=(at dfu-programmer efibootmgr ethtool kernelstub libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd system76-wallpapers xbacklight)
+LANGUAGES=(ar de en es fr it ja pt ru zh zh-hans zh-hant)
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
-BUILD_DIR="${SCRIPTS_DIR}/../build"
+BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"
 CACHE_DIR="${BUILD_DIR}/cache"
 
-FS_DIR="${SCRIPTS_DIR}/../fs"
+FS_DIR="$(realpath "${SCRIPTS_DIR}/../fs")"
 FS_COMMON_DIR="${FS_DIR}/common"
 FS_LIVE_EFI_DIR="${FS_DIR}/live-efi"
+FS_POOL_DIR="${FS_DIR}/pool"
 
 ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"
 ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
@@ -27,10 +30,15 @@ ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
 IMG_FILE="${BUILD_DIR}/pop-os.img"
 
 CASPER_NAME="casper_${DISTRO_NAME}_${DISTRO_VERSION}"
-IMG_MNT_DIR="${BUILD_DIR}/mnt"
-IMG_CASPER_DIR="${IMG_MNT_DIR}/${CASPER_NAME}"
-IMG_FILESYSTEM_SIZE_TAG="${IMG_CASPER_DIR}/filesystem.size"
-IMG_ROOTFS_SQUASHED="${IMG_CASPER_DIR}/filesystem.squashfs"
+MNT_DIR="${BUILD_DIR}/mnt"
+CASPER_DIR="${MNT_DIR}/${CASPER_NAME}"
+FILESYSTEM_SIZE_TAG="${CASPER_DIR}/filesystem.size"
+ROOTFS_SQUASHED="${CASPER_DIR}/filesystem.squashfs"
+POOL_DIR="${MNT_DIR}/pool"
+MAIN_POOL_DIR="${POOL_DIR}/main"
+DISTS_DIR="${MNT_DIR}/dists"
+
+SED_PATTERN="s|CASPER_PATH|${CASPER_NAME}|g; s|DISTRO_NAME|${DISTRO_NAME}|g; s|UBUNTU_CODE|${UBUNTU_CODE}|g; s|DISTRO_VERSION|${DISTRO_VERSION}|g"
 
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")

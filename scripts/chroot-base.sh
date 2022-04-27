@@ -6,14 +6,9 @@ rm -f /00-config.sh
 
 # This is needed to allow us to connect to the internet.
 # Without this, we cannot resolve any DNS!
-# We can't do this beforehand, as the /run directory is
-# a mount, rather than a normal folder
-if [ ! -f /run/systemd/resolve/stub-resolv.conf ]
-then
-	info "Fixing DNS"
-    mkdir -p /run/systemd/resolve
-    echo "nameserver 1.1.1.1" > /run/systemd/resolve/stub-resolv.conf
-fi
+info "Fixing DNS"
+rm -f /etc/resolv.conf
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
 
 #info "Filling in /etc/fstab"
 #ROOTFS_UUID=$(cat /rootfs.uuid)
@@ -36,6 +31,19 @@ if [ ${#DISTRO_PKGS[@]} -ne 0 ]; then
     apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install pop-desktop"
 fi
 
+# Install language packs
+if [ ${#LANGUAGES[@]} -ne 0 ]; then
+    pkgs=""
+    for language in ${LANGUAGES[@]}
+    do
+        info "Adding language '${language}'"
+        pkgs+=" $(XDG_CURRENT_DESKTOP=GNOME check-language-support --show-installed --language="${language}")"
+    done
+    if [ -n "$pkgs" ]; then
+        apt-get --yes install --no-install-recommends $pkgs 2>&1| capture_and_log "install language packs"
+    fi
+fi
+
 # Upgrade all packages.
 apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
 
@@ -53,7 +61,7 @@ apt-get --yes clean 2>&1| capture_and_log "apt clean"
 
 # We need to install the systemd-boot EFI bootloader.
 info "Installing systemd-boot"
-env SYSTEMD_RELAX_ESP_CHECKS=1 bootctl install --no-variables --esp-path=/boot/efi 2>&1| capture_and_log "bootctl install"
+bootctl install --no-variables --esp-path=/boot/efi 2>&1| capture_and_log "bootctl install"
 
 # systemd-boot on arm64 doesn't support compressed kernels,
 # so we have to un-gzip vmlinuz, and then copy it back to the ESP.

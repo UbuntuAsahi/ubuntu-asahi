@@ -4,13 +4,7 @@ set -e
 source /00-config.sh
 rm -f /00-config.sh
 
-if [ ! -f /run/systemd/resolve/stub-resolv.conf ]
-then
-	info "Fixing DNS"
-    mkdir -p /run/systemd/resolve
-    echo "nameserver 1.1.1.1" > /run/systemd/resolve/stub-resolv.conf
-fi
-
+info "Fixing DNS"
 rm -f /etc/resolv.conf
 echo "nameserver 1.1.1.1" > /etc/resolv.conf
 
@@ -19,9 +13,17 @@ if [ ${#LIVE_PKGS[@]} -ne 0 ]; then
     apt-get --yes install ${LIVE_PKGS[@]} 2>&1| capture_and_log "install live utilities"
 fi
 
-info "Copying new initrd to /boot/efi"
+info "Setting up pool"
+mkdir -p /iso/pool/main
+if [ ${#MAIN_POOL[@]} -ne 0 ]; then
+    pushd "/iso/pool/main"
+        apt-get --yes download ${MAIN_POOL[@]} 2>&1| capture_and_log "download main pool"
+    popd
+fi
+
+info "Copying new initrd to /iso"
 ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
-cp -f "$ACTUAL_INITRD" /boot/efi/initrd.img
+cp -f "$ACTUAL_INITRD" /iso/initrd.img
 
 # Clean up any left-behind crap, such as tempfiles and machine-id.
 info "Cleaning up data..."

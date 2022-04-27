@@ -7,7 +7,8 @@ source "$(dirname "$(readlink -f "$0")")/../00-config.sh"
 STARTING_DIR="$PWD"
 function cleanup {
 	cd "${STARTING_DIR}"
-	umount -Rf "${ROOTFS_LIVE_DIR}/boot/efi"
+	sync
+	umount -Rf "${ROOTFS_LIVE_DIR}/iso"
 	losetup --associated "${IMG_FILE}" | cut -d ':' -f1 | while read LODEV
 	do
 		losetup --detach "$LODEV"
@@ -20,12 +21,13 @@ rm -rf "${ROOTFS_LIVE_DIR}"
 cp -a "${ROOTFS_BASE_DIR}" "${ROOTFS_LIVE_DIR}"
 
 # Mount the EFI system partition
-info "Mounting EFI partition"
+info "Mounting EFI partition to /iso"
 LOOP_DEV=$(losetup --find --show --partscan "${IMG_FILE}")
-mount "${LOOP_DEV}p1" "${ROOTFS_LIVE_DIR}/boot/efi"
+mkdir -p "${ROOTFS_LIVE_DIR}/iso"
+mount "${LOOP_DEV}p1" "${ROOTFS_LIVE_DIR}/iso"
 
 info "Syncing live EFI files to ESP"
-rsync -rv "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/boot/efi/"
+rsync -rv "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/iso/"
 
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_LIVE_DIR}"
 cp -f "${SCRIPTS_DIR}/live/chroot-live.sh" "${ROOTFS_LIVE_DIR}"
@@ -37,4 +39,4 @@ systemd-nspawn \
 	--directory="${ROOTFS_LIVE_DIR}" \
 	bash /chroot-live.sh
 
-rm -f "${ROOTFS_LIVE_DIR}/chroot-live.sh"
+rm -rf "${ROOTFS_LIVE_DIR}/chroot-live.sh"
