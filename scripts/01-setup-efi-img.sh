@@ -11,8 +11,8 @@ function cleanup {
 }
 trap cleanup EXIT
 
-# Allocate a 4GiB image file
-fallocate -l 4G "${IMG_FILE}"
+# Allocate a 3GiB image file (4/29/22 - image was 2.7G, setting it to 3GiB to leave space for future expansions)
+fallocate -l 3G "${IMG_FILE}"
 
 # Create a 4GiB partition
 parted -s "${IMG_FILE}" mklabel gpt
