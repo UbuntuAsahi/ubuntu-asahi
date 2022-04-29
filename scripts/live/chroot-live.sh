@@ -13,6 +13,13 @@ if [ ${#LIVE_PKGS[@]} -ne 0 ]; then
     apt-get --yes install ${LIVE_PKGS[@]} 2>&1| capture_and_log "install live utilities"
 fi
 
+NUM_DEBS_TO_INSTALL=$(find /debs -name "*.deb" -type f | wc -l)
+if [ ${NUM_DEBS_TO_INSTALL} -gt 0 ]; then
+    info "Found ${NUM_DEBS_TO_INSTALL} extra debs to install"
+    apt-get --yes install /debs/*.deb 2>&1| capture_and_log "install custom debs"
+fi
+rm -rf /debs
+
 info "Setting up pool"
 mkdir -p /iso/pool/main
 if [ ${#MAIN_POOL[@]} -ne 0 ]; then
@@ -21,18 +28,17 @@ if [ ${#MAIN_POOL[@]} -ne 0 ]; then
     popd
 fi
 
-apt-get --yes install /*.deb
-rm -f /*.deb
-
-info "Copying new initrd to /iso"
-ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
-cp -f "$ACTUAL_INITRD" /iso/initrd.img
-
 info "Setting up casper scripts"
 rm -f /usr/share/initramfs-tools/scripts/casper-bottom/01integrity_check
 sed -i \
 		"s|touch /root/home/\$USERNAME/.config/gnome-initial-setup-done|echo -n \"${GNOME_INITIAL_SETUP_STAMP}\" > /root/home/\$USERNAME/.config/gnome-initial-setup-done|" \
 		/usr/share/initramfs-tools/scripts/casper-bottom/52gnome_initial_setup
+
+update-initramfs -c -k all 2>&1| capture_and_log "updating initramfs"
+
+info "Copying new initrd to /iso"
+ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
+cp -f "$ACTUAL_INITRD" /iso/initrd.img
 
 info "Creating live filesystem manifest"
 dpkg-query -W --showformat='${Package}\t${Version}\n' > /manifest

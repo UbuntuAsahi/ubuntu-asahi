@@ -28,7 +28,7 @@ for pool in $(ls -1 "${POOL_DIR}"); do
 	info "Generating package index for pool ${pool}"
     mkdir -p "${DISTS_DIR}/${UBUNTU_CODE}/${pool}/binary-arm64"
     apt-ftparchive packages "${POOL_DIR}/${pool}" > "${DISTS_DIR}/${UBUNTU_CODE}/${pool}/binary-arm64/Packages"
-    gzip -k "${DISTS_DIR}/${UBUNTU_CODE}/${pool}/binary-arm64/Packages"
+    gzip -f -k "${DISTS_DIR}/${UBUNTU_CODE}/${pool}/binary-arm64/Packages"
     sed "s|COMPONENT|${pool}|g; ${SED_PATTERN}" "${FS_POOL_DIR}/Release" > "${DISTS_DIR}/${UBUNTU_CODE}/${pool}/binary-arm64/Release";
 done;
 

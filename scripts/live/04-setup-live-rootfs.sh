@@ -20,6 +20,9 @@ info "Copying rootfs.base to rootfs.live"
 rm -rf "${ROOTFS_LIVE_DIR}"
 cp -a "${ROOTFS_BASE_DIR}" "${ROOTFS_LIVE_DIR}"
 
+info "Syncing live files to rootfs.live"
+rsync -arv "${FS_LIVE_DIR}/" "${ROOTFS_LIVE_DIR}/"
+
 # Mount the EFI system partition
 info "Mounting EFI partition to /iso"
 LOOP_DEV=$(losetup --find --show --partscan "${IMG_FILE}")
@@ -31,7 +34,7 @@ rsync -rv "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/iso/"
 
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_LIVE_DIR}"
 cp -f "${SCRIPTS_DIR}/live/chroot-live.sh" "${ROOTFS_LIVE_DIR}"
-cp -f ../../*.deb "${ROOTFS_LIVE_DIR}"
+cp -rf "${FS_LIVE_DEBS_DIR}" "${ROOTFS_LIVE_DIR}/debs"
 
 info "Spawning chroot via systemd-nspawn"
 systemd-nspawn \
