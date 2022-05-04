@@ -31,6 +31,9 @@ grep -F -x -v -f "${CHROOT_MANIFEST}" "${LIVE_MANIFEST}" | cut -f1 > "${CASPER_D
 info "Calculating filesystem size"
 du -sx --block-size=1 "${ROOTFS_LIVE_DIR}" | cut -f1 > "${FILESYSTEM_SIZE_TAG}"
 
+info "Filling out .disk/info"
+sed -i "${SED_PATTERN}" "${DOT_DISK_INFO}"
+
 info "Squashing rootfs"
 mksquashfs "${ROOTFS_LIVE_DIR}" "${ROOTFS_SQUASHED}" -noappend -fstime "$(date +%s)"
 

@@ -1,15 +1,24 @@
 #!/bin/bash
 set -e
 
+export LC=C.UTF-8
+
+# If the below line errors; then run `sudo git config --global --add safe.directory '*'`.
+# If you feel unsafe doing that, you can just replace `*` with the full path to this repository.
+# Git doesn't like it when you run git commands in the dir of another user, but this should be safe as it's just a read-only command.
+SOURCE_DATE_EPOCH="$(git --git-dir="$PWD/../.git" log -1 --format='%ct' 2> /dev/null || echo "42")"
 DISTRO_NAME=pop-os
 DISTRO_VERSION=22.04
-UBUNTU_CODE=jammy
 DISTRO_VOLUME_LABEL="Pop!_OS ${DISTRO_VERSION} arm64"
+DISTRO_EPOCH="${SOURCE_DATE_EPOCH}"
+DISTRO_DATE="$(date --date=@"${SOURCE_DATE_EPOCH}" +%Y%m%d)"
+UBUNTU_CODE=jammy
+UBUNTU_NAME="Jammy Jellyfish"
 GNOME_INITIAL_SETUP_STAMP=22.04
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
 #LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper)
-LIVE_PKGS=(casper distinst expect gparted)
+LIVE_PKGS=(casper expect gparted)
 HOLD_PKGS=(snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi)
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui pop-installer-session snapd ubuntu-session ubuntu-wallpapers unattended-upgrades xul-ext-ubufox yaru-theme-gnome-shell)
 MAIN_POOL=(at dfu-programmer efibootmgr ethtool kernelstub libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd system76-wallpapers xbacklight)
@@ -36,6 +45,7 @@ IMG_FILE="${BUILD_DIR}/pop-os.img"
 
 CASPER_NAME="casper_${DISTRO_NAME}_${DISTRO_VERSION}"
 MNT_DIR="${BUILD_DIR}/mnt"
+DOT_DISK_INFO="${MNT_DIR}/.disk/info"
 CASPER_DIR="${MNT_DIR}/${CASPER_NAME}"
 FILESYSTEM_SIZE_TAG="${CASPER_DIR}/filesystem.size"
 ROOTFS_SQUASHED="${CASPER_DIR}/filesystem.squashfs"
@@ -43,7 +53,7 @@ POOL_DIR="${MNT_DIR}/pool"
 MAIN_POOL_DIR="${POOL_DIR}/main"
 DISTS_DIR="${MNT_DIR}/dists"
 
-SED_PATTERN="s|CASPER_PATH|${CASPER_NAME}|g; s|DISTRO_NAME|${DISTRO_NAME}|g; s|UBUNTU_CODE|${UBUNTU_CODE}|g; s|DISTRO_VERSION|${DISTRO_VERSION}|g"
+SED_PATTERN="s|CASPER_PATH|${CASPER_NAME}|g; s|DISTRO_NAME|${DISTRO_NAME}|g; s|UBUNTU_CODE|${UBUNTU_CODE}|g; s|DISTRO_VERSION|${DISTRO_VERSION}|g; s|UBUNTU_NAME|${UBUNTU_NAME}|g; s|DISTRO_EPOCH|${DISTRO_EPOCH}|g; s|DISTRO_DATE|${DISTRO_DATE}|g"
 
 _RED=$(tput setaf 1 || "")
 _GREEN=$(tput setaf 2 || "")
