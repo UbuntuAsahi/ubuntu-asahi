@@ -72,7 +72,7 @@ cp "$ACTUAL_VMLINUZ" /tmp/vmlinuz.gz
 gzip -d /tmp/vmlinuz.gz
 cp -f /tmp/vmlinuz /boot/efi/vmlinuz
 rm -f /tmp/vmlinuz
-cp -f "$ACTUAL_INITRD" /boot/efi/initrd.img
+cp -f "$ACTUAL_INITRD" /boot/efi/initrd.gz
 
 # Dunno what this does, honestly.
 info "Creating missing NetworkManager config"

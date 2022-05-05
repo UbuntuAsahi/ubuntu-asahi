@@ -38,9 +38,9 @@ update-initramfs -c -k all 2>&1| capture_and_log "updating initramfs"
 
 info "Copying new initrd to /iso/${CASPER_NAME}"
 ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
-rm -f "/iso/initrd.img"
+rm -f "/iso/initrd.gz"
 mkdir -p "/iso/${CASPER_NAME}"
-cp -f "$ACTUAL_INITRD" "/iso/${CASPER_NAME}/initrd.img"
+cp -f "$ACTUAL_INITRD" "/iso/${CASPER_NAME}/initrd.gz"
 
 info "Moving vmlinuz to /iso/${CASPER_NAME}"
 mv -f "/iso/vmlinuz" "/iso/${CASPER_NAME}/vmlinuz.efi"

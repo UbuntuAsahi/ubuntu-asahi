@@ -9,7 +9,7 @@ function cleanup {
 	cd "${STARTING_DIR}"
 	sync
 	umount -Rf "${MNT_DIR}"
-	losetup --associated "${IMG_FILE}" | cut -d ':' -f1 | while read LODEV
+	losetup --associated "${LIVE_IMG_FILE}" | cut -d ':' -f1 | while read LODEV
 	do
 		sudo losetup --detach "$LODEV"
 	done
@@ -20,7 +20,7 @@ rm -rf "${MNT_DIR}"
 mkdir -p "${MNT_DIR}"
 
 info "Mounting image"
-LOOP_DEV=$(losetup --find --show --partscan "${IMG_FILE}")
+LOOP_DEV=$(losetup --find --show --partscan "${LIVE_IMG_FILE}")
 mount "${LOOP_DEV}p1" "${MNT_DIR}"
 mkdir -p "${CASPER_DIR}"
 

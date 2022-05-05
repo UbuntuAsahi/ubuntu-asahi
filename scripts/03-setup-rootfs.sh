@@ -8,7 +8,7 @@ STARTING_DIR="$PWD"
 function cleanup {
 	cd "${STARTING_DIR}"
 	umount -Rf "${ROOTFS_BASE_DIR}/boot/efi"
-	losetup --associated "${IMG_FILE}" | cut -d ':' -f1 | while read LODEV
+	losetup --associated "${BASE_IMG_FILE}" | cut -d ':' -f1 | while read LODEV
 	do
 		sudo losetup --detach "$LODEV"
 	done
@@ -22,7 +22,7 @@ cp -f "${SCRIPTS_DIR}/chroot-base.sh" "${ROOTFS_BASE_DIR}"
 
 # Mount the EFI system partition
 info "Mounting EFI partition"
-LOOP_DEV=$(losetup --find --show --partscan "${IMG_FILE}")
+LOOP_DEV=$(losetup --find --show --partscan "${BASE_IMG_FILE}")
 mount "${LOOP_DEV}p1" "${ROOTFS_BASE_DIR}/boot/efi"
 
 # Alright, here's the fun part!
