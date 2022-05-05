@@ -1,58 +1,51 @@
-# Pop!_OS for M1
+# Pop!_OS UEFI ARM64 Image
 
-This is a script for compiling a Pop!_OS image compatible with the Asahi Linux installer.
+This is a repository that contains scripts for compiling an ARM64 UEFI image for Pop!_OS.
 
-## Compiling
 
-This script expects to be run on a fairly recent Ubuntu, and will require root at several points.
+## Building
 
-```sh
-$ ./bootstrap.sh
-```
 
-This may take a while, as it will compile the Linux kernel, M1N1, and U-Boot, and then bootstrap a Pop!_OS rootfs and install the entire desktop.
-
-If it succeeds, an `out` folder will be created, with an `installer_data.json` and an `os` folder. You can upload this to an HTTP server to serve your Pop! image, or install it locally on your M1 Mac like so:
+### Install dependencies
 
 ```sh
-# After copying it to your Mac
-$ cd out
-# Set up environmental variables so the installer knows where to find your OS build
-$ export REPO_BASE="$PWD"
-$ export INSTALLER_DATA="$PWD/installer_data.json"
-# Download and extract the latest installer
-$ INSTALLER_PKG="installer-$(curl -s -L https://cdn.asahilinux.org/installer/latest).tar.gz"
-$ curl -s -L -o "$INSTALLER_PKG" "https://cdn.asahilinux.org/installer/${INSTALLER_PKG}"
-$ tar xf "$INSTALLER_PKG"
-# Run the installer
-$ ./install.sh
+# Install dependencies
+sudo apt-get install debootstrap mtools parted gnupg systemd-container eatmydata rsync git squashfs-tools
+# Install dependencies, if your builder system is NOT arm64
+sudo apt-get install binfmt-support qemu qemu-user-static qemu-user-binfmt
 ```
 
-## Caveats
+### Build everything
 
-Linux on M1 isn't exactly ready for daily use yet. Several major things lack full support, including...
+```sh
+cd pop-arm64
+# Build the entire live image
+sudo ./build-generic.sh
+```
 
- - GPU acceleration
- - USB 3
- - Speakers
- - HDMI
- - Headphone Jack (M1 Pro/Max)
- - DisplayPort
- - Thunderbolt
- - Bluetooth
- - Hardware video decode
- - Neural engine
- - CPU deep sleep/idle
- - Sleep mode
- - Camera
- - Touch bar
+The live GPT image file will be output to `build/pop-os.live.img`.
 
-In addition, some programs such as Chromium don't work yet, even with their ARM64 builds.
+### Rebuild live image
 
-However, if you understand these caveats, and just want to mess around, then feel free to set up an install :)
+**Note**: _you must have ran build-generic once already, or at least the non-live scripts!_
 
-## Support Asahi Linux
+```sh
+# Go to the build folder
+cd pop-arm64/build
+# Re-build the live parts of the image
+sudo ../scripts/live/04-setup-live-rootfs.sh && \
+	sudo ../scripts/live/05-setup-pool.sh && \
+	sudo ../scripts/live/06-build-live-image.sh
+```
 
-This is *not* an official Asahi Linux project, nor is System76 affiliated with the project in any way.
+Once again, the live GPT image file will be output to `build/pop-os.live.img`.
 
-However, if you wish to give support to the Asahi project, then please [support the main developer, marcan, on Github Sponsors](https://github.com/sponsors/marcan)!
+### Clean
+
+The `clean.sh` script will do exactly what it says - it will clean up the `build` folder, except for the `cache` folder, which is used by debootstrap to cache debs.
+
+```sh
+cd pop-arm64
+# Clean the build folder
+./clean.sh
+```
