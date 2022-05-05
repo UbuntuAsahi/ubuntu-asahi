@@ -14,7 +14,7 @@ DISTRO_EPOCH="${SOURCE_DATE_EPOCH}"
 DISTRO_DATE="$(date --date=@"${SOURCE_DATE_EPOCH}" +%Y%m%d)"
 UBUNTU_CODE=jammy
 UBUNTU_NAME="Jammy Jellyfish"
-GNOME_INITIAL_SETUP_STAMP=22.04
+GNOME_INITIAL_SETUP_STAMP=21.04
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
 #LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper)
