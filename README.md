@@ -12,7 +12,7 @@ This is a repository that contains scripts for compiling an ARM64 UEFI image for
 # Install dependencies
 sudo apt-get install debootstrap mtools parted gnupg systemd-container eatmydata rsync git squashfs-tools
 # Install dependencies, if your builder system is NOT arm64
-sudo apt-get install binfmt-support qemu qemu-user-static qemu-user-binfmt
+sudo apt-get install binfmt-support qemu qemu-user-static
 ```
 
 ### Build everything
