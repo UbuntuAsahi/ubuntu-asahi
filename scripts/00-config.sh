@@ -21,7 +21,7 @@ RELEASE_SIGN_KEY=${RELEASE_SIGN_KEY:-5D59E46F74BC1810}
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
 LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper spice-vdagent)
-HOLD_PKGS=(snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi)
+HOLD_PKGS=(snapd pop-desktop-raspi rpi-eeprom u-boot-rpi)
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui pop-installer-session snapd ubuntu-session ubuntu-wallpapers unattended-upgrades xul-ext-ubufox yaru-theme-gnome-shell)
 MAIN_POOL=(at dfu-programmer efibootmgr ethtool kernelstub libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd system76-wallpapers xbacklight)
 LANGUAGES=(ar de en es fr it ja pt ru zh zh-hans zh-hant)
