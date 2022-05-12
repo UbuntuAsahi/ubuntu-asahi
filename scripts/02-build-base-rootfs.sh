@@ -26,7 +26,7 @@ mkdir -p cache
 eatmydata $DEBOOTSTRAP \
 		--arch=arm64 \
 		--cache-dir="${CACHE_DIR}" \
-		--include apt,initramfs-tools,linux-raspi \
+		--include apt,initramfs-tools,linux-image-generic \
 		"${UBUNTU_CODE}" \
 		"${ROOTFS_BASE_DIR}" \
 		http://ports.ubuntu.com/ubuntu-ports 2>&1| capture_and_log "bootstrap pop"
