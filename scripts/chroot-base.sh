@@ -10,15 +10,8 @@ info "Fixing DNS"
 rm -f /etc/resolv.conf
 echo "nameserver 1.1.1.1" > /etc/resolv.conf
 
-#info "Filling in /etc/fstab"
-#ROOTFS_UUID=$(cat /rootfs.uuid)
-#EFI_UUID=$(cat /efi.uuid)
-#sed -i "s/POP_UUID/${ROOTFS_UUID}/" /etc/fstab
-#sed -i "s/EFI_UUID/${EFI_UUID}/" /etc/fstab
-#rm -f /rootfs.uuid /efi.uuid
-
 # We gotta make sure our package database is up-to-date
-apt-get --yes update 2>&1| capture_and_log "apt update"
+eatmydata apt-get --yes update 2>&1| capture_and_log "apt update"
 
 # Then, we're going to mark packages that we don't want to install as "held",
 # so, well, they don't get installed!
@@ -28,7 +21,7 @@ fi
 
 # We're going to install the primary distro packages - pop-desktop and friends - now.
 if [ ${#DISTRO_PKGS[@]} -ne 0 ]; then
-    apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install pop-desktop"
+    eatmydata apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install pop-desktop"
 fi
 
 # Install language packs
@@ -40,12 +33,12 @@ if [ ${#LANGUAGES[@]} -ne 0 ]; then
         pkgs+=" $(XDG_CURRENT_DESKTOP=GNOME check-language-support --show-installed --language="${language}")"
     done
     if [ -n "$pkgs" ]; then
-        apt-get --yes install --no-install-recommends $pkgs 2>&1| capture_and_log "install language packs"
+        eatmydata apt-get --yes install --no-install-recommends $pkgs 2>&1| capture_and_log "install language packs"
     fi
 fi
 
 # Upgrade all packages.
-apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
+eatmydata apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
 
 # kernelstub's postinst probably left some crap clogging up the EFI partition,
 # let's just clean that up.
@@ -53,11 +46,17 @@ info "Cleaning up old boot files"
 rm -rf /boot/efi/EFI/{Pop_OS,Ubuntu}-
 
 # Clean up any unused dependencies that may now be lying around after the upgrade.
-apt-get --yes autoremove --purge 2>&1| capture_and_log "apt autoremove"
+eatmydata apt-get --yes autoremove --purge 2>&1| capture_and_log "apt autoremove"
+
+info "Unmounting apt cache"
+umount /var/cache/apt/archives
 
 # Clean up the apt caches, so we don't leave anything behind.
-apt-get --yes autoclean 2>&1| capture_and_log "apt autoclean"
-apt-get --yes clean 2>&1| capture_and_log "apt clean"
+eatmydata apt-get --yes autoclean 2>&1| capture_and_log "apt autoclean"
+eatmydata apt-get --yes clean 2>&1| capture_and_log "apt clean"
+
+info "Synchronizing changes to disk"
+sync
 
 # We need to install the systemd-boot EFI bootloader.
 info "Installing systemd-boot"

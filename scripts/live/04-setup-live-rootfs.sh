@@ -8,7 +8,8 @@ STARTING_DIR="$PWD"
 function cleanup {
 	cd "${STARTING_DIR}"
 	sync
-	umount -Rf "${ROOTFS_LIVE_DIR}/iso"
+	umount -Rf "${ROOTFS_LIVE_DIR}/iso" || true
+	umount -Rf "${ROOTFS_LIVE_DIR}/var/cache/apt/archives" || true
 	losetup --associated "${LIVE_IMG_FILE}" | cut -d ':' -f1 | while read LODEV
 	do
 		losetup --detach "$LODEV"
@@ -42,6 +43,10 @@ cp -rf "${FS_LIVE_DEBS_DIR}" "${ROOTFS_LIVE_DIR}/debs"
 
 info "Copying gpg key to rootfs"
 gpg --batch --yes --export "${RELEASE_SIGN_KEY}" > "${ROOTFS_LIVE_DIR}/etc/apt/trusted.gpg.d/cdrom-pool.gpg"
+
+info "Bind mounting apt cache"
+mkdir -p "${ROOTFS_LIVE_DIR}/var/cache/apt/archives"
+mount --bind "${CACHE_DIR}" "${ROOTFS_LIVE_DIR}/var/cache/apt/archives"
 
 info "Spawning chroot via systemd-nspawn"
 systemd-nspawn \
