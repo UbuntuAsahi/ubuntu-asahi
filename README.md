@@ -1,6 +1,6 @@
-# Pop!_OS UEFI ARM64 Image
+# Ubuntu UEFI Apple Silicon Image
 
-This is a repository that contains scripts for compiling an ARM64 UEFI image for Pop!_OS.
+This is a repository that contains scripts for compiling an ARM64 UEFI image for Ubuntu.
 
 
 ## Building
@@ -18,12 +18,12 @@ sudo apt-get install binfmt-support qemu qemu-user-static
 ### Build everything
 
 ```sh
-cd pop-arm64
+cd asahi-ubuntu
 # Build the entire live image
 sudo ./build-generic.sh
 ```
 
-The live GPT image file will be output to `build/pop-os.live.img`.
+The live GPT image file will be output to `build/ubuntu.live.img`.
 
 ### Rebuild live image
 
@@ -31,21 +31,21 @@ The live GPT image file will be output to `build/pop-os.live.img`.
 
 ```sh
 # Go to the build folder
-cd pop-arm64/build
+cd asahi-ubuntu/build
 # Re-build the live parts of the image
 sudo ../scripts/live/04-setup-live-rootfs.sh && \
 	sudo ../scripts/live/05-setup-pool.sh && \
 	sudo ../scripts/live/06-build-live-image.sh
 ```
 
-Once again, the live GPT image file will be output to `build/pop-os.live.img`.
+Once again, the live GPT image file will be output to `build/ubuntu.live.img`.
 
 ### Clean
 
 The `clean.sh` script will do exactly what it says - it will clean up the `build` folder, except for the `cache` folder, which is used by debootstrap to cache debs.
 
 ```sh
-cd pop-arm64
+cd asahi-ubuntu
 # Clean the build folder
 ./clean.sh
 ```
