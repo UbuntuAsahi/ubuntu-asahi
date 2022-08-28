@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+source "$(dirname "$(readlink -f "$0")")/../00-config.sh"
 source $(dirname "$(readlink -f "$0")")/../00-arm64-cross-compile.sh
 
 # Go back to starting dir on script exit
@@ -22,7 +23,7 @@ curl -s https://tg.st/u/0001-4k-iommu-patch-2022-03-11.patch | git am - 2>&1| ca
 
 # Set up configuration
 curl -s https://tg.st/u/config-2022-03-17-distro-sven-jannau.txt > .config 2>&1| capture_and_log "download defconfig"
-make olddefconfig 2>&1| capture_and_log "setup linux defconfig"
+make ARCH=arm64 CROSS_COMPILE=/usr/bin/arrch64-linux-gnu- olddefconfig 2>&1| capture_and_log "setup linux defconfig"
 
 # Compile the kernel
-make -j `nproc` V=0 bindeb-pkg 2>&1| capture_and_log "build asahi linux"
+make ARCH=arm64 CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- -j `nproc` V=0 bindeb-pkg 2>&1| capture_and_log "build asahi linux"

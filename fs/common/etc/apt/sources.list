@@ -1,2 +1,2 @@
-## This file is deprecated in Pop!_OS.
-## See `man deb822` and /etc/apt/sources.list.d/system.sources.
+deb http://ports.ubuntu.com/ubuntu-ports kinetic main
+# deb http://ports.ubuntu.com/ubuntu-ports jammy-proposed main

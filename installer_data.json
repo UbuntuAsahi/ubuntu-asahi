@@ -1,11 +1,11 @@
 {
 	"os_list": [
 		{
-			"name": "Pop!_OS 22.04",
-			"default_os_name": "Pop!_OS",
+			"name": "Ubuntu 22.04",
+			"default_os_name": "Ubuntu",
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
-			"package": "pop-base.zip",
+			"package": "ubuntu-base.zip",
 			"supported_fw": [
 				"12.3"
 			],

@@ -37,4 +37,4 @@ sed -i "${SED_PATTERN}" "${DOT_DISK_INFO}"
 info "Squashing rootfs"
 mksquashfs "${ROOTFS_LIVE_DIR}" "${ROOTFS_SQUASHED}" -noappend -fstime "$(date +%s)"
 
-sed -i "${SED_PATTERN}" "${MNT_DIR}/loader/entries/Pop_OS.conf"
+sed -i "${SED_PATTERN}" "${MNT_DIR}/loader/entries/Ubuntu.conf"

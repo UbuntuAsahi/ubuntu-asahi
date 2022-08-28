@@ -36,7 +36,7 @@ mount --bind "${CACHE_DIR}" "${ROOTFS_BASE_DIR}/var/cache/apt/archives"
 # run a fully functioning systemd within the chroot.
 info "Spawning chroot via systemd-nspawn"
 systemd-nspawn \
-	--machine=pop-os \
+	--machine=ubuntu \
 	--resolv-conf=off \
 	--directory="${ROOTFS_BASE_DIR}" \
 	bash /chroot-base.sh

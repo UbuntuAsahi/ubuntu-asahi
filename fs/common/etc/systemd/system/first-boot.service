@@ -1,5 +1,5 @@
 [Unit]
-Description=Pop!_OS First Boot Script
+Description=Ubuntu First Boot Script
 
 [Service]
 Type=simple

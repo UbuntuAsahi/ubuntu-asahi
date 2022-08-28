@@ -14,10 +14,10 @@ trap cleanup EXIT
 # Clean up old directories
 rm -rf "${ROOTFS_BASE_DIR}"
 
-info "Bootstrapping Pop!_OS with $DEBOOTSTRAP"
+info "Bootstrapping Ubuntu with $DEBOOTSTRAP"
 mkdir -p cache
 
-# This is where we actually CREATE our initial Pop!_OS system.
+# This is where we actually CREATE our initial Ubuntu system.
 # debootstrap will fetch all the necessary packages for a base Debian/Ubuntu system,
 # and install them fresh into our new rootfs directory, which we can later chroot into.
 # 
@@ -29,7 +29,7 @@ eatmydata $DEBOOTSTRAP \
 		--include apt,initramfs-tools,linux-image-generic,eatmydata \
 		"${UBUNTU_CODE}" \
 		"${ROOTFS_BASE_DIR}" \
-		http://ports.ubuntu.com/ubuntu-ports 2>&1| capture_and_log "bootstrap pop"
+		http://ports.ubuntu.com/ubuntu-ports 2>&1| capture_and_log "bootstrap ubuntu"
 
 # Since we suppressed all fsyncs during the bootstrap, we need to do them now.
 info "Syncing data to filesystem"

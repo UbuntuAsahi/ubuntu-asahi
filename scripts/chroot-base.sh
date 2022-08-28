@@ -19,23 +19,23 @@ if [ ${#HOLD_PKGS[@]} -ne 0 ]; then
     apt-mark hold ${HOLD_PKGS[@]} 2>&1| capture_and_log "hold packages"
 fi
 
-# We're going to install the primary distro packages - pop-desktop and friends - now.
+# We're going to install the primary distro packages - ubuntu-desktop and friends - now.
 if [ ${#DISTRO_PKGS[@]} -ne 0 ]; then
-    eatmydata apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install pop-desktop"
+    eatmydata apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install ubuntu-desktop"
 fi
 
-# Install language packs
-if [ ${#LANGUAGES[@]} -ne 0 ]; then
-    pkgs=""
-    for language in ${LANGUAGES[@]}
-    do
-        info "Adding language '${language}'"
-        pkgs+=" $(XDG_CURRENT_DESKTOP=GNOME check-language-support --show-installed --language="${language}")"
-    done
-    if [ -n "$pkgs" ]; then
-        eatmydata apt-get --yes install --no-install-recommends $pkgs 2>&1| capture_and_log "install language packs"
-    fi
-fi
+# # Install language packs
+# if [ ${#LANGUAGES[@]} -ne 0 ]; then
+#     pkgs=""
+#     for language in ${LANGUAGES[@]}
+#     do
+#         info "Adding language '${language}'"
+#         pkgs+=" $(XDG_CURRENT_DESKTOP=GNOME check-language-support --show-installed --language="${language}")"
+#     done
+#     if [ -n "$pkgs" ]; then
+#         eatmydata apt-get --yes install --no-install-recommends $pkgs 2>&1| capture_and_log "install language packs"
+#     fi
+# fi
 
 # Upgrade all packages.
 eatmydata apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
@@ -43,7 +43,7 @@ eatmydata apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "a
 # kernelstub's postinst probably left some crap clogging up the EFI partition,
 # let's just clean that up.
 info "Cleaning up old boot files"
-rm -rf /boot/efi/EFI/{Pop_OS,Ubuntu}-
+rm -rf /boot/efi/EFI/Ubuntu
 
 # Clean up any unused dependencies that may now be lying around after the upgrade.
 eatmydata apt-get --yes autoremove --purge 2>&1| capture_and_log "apt autoremove"

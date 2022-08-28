@@ -7,24 +7,24 @@ export LC=C.UTF-8
 # If you feel unsafe doing that, you can just replace `*` with the full path to this repository.
 # Git doesn't like it when you run git commands in the dir of another user, but this should be safe as it's just a read-only command.
 SOURCE_DATE_EPOCH="$(git --git-dir="$PWD/../.git" log -1 --format='%ct' 2> /dev/null || echo "42")"
-DISTRO_NAME=pop-os
+DISTRO_NAME=ubuntu
 DISTRO_VERSION=22.04
-DISTRO_VOLUME_LABEL="Pop!_OS ${DISTRO_VERSION} arm64"
+DISTRO_VOLUME_LABEL="Ubuntu ${DISTRO_VERSION} arm64"
 DISTRO_EPOCH="${SOURCE_DATE_EPOCH}"
 DISTRO_DATE="$(date --date=@"${SOURCE_DATE_EPOCH}" +%Y%m%d)"
-UBUNTU_CODE=jammy
-UBUNTU_NAME="Jammy Jellyfish"
+UBUNTU_CODE=kinetic
+UBUNTU_NAME="Kinetic Kudu"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
 # Change this for production!
 RELEASE_SIGN_KEY=${RELEASE_SIGN_KEY:-5D59E46F74BC1810}
 
-DISTRO_PKGS=(ubuntu-minimal ubuntu-standard pop-desktop)
-LIVE_PKGS=(casper distinst expect gparted pop-installer pop-installer-casper spice-vdagent)
-HOLD_PKGS=(snapd pop-desktop-raspi linux-raspi rpi-eeprom u-boot-rpi)
-RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui pop-installer-session snapd ubuntu-session ubuntu-wallpapers unattended-upgrades xul-ext-ubufox yaru-theme-gnome-shell)
-MAIN_POOL=(at dfu-programmer efibootmgr ethtool kernelstub libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd system76-wallpapers xbacklight)
-LANGUAGES=(ar de en es fr it ja pt ru zh zh-hans zh-hant)
+DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-desktop)
+LIVE_PKGS=(casper gparted firefox ubiquity ubiquity-casper)
+HOLD_PKGS=()
+RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
+MAIN_POOL=(at dfu-programmer efibootmgr ethtool libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd xbacklight linux-firmware)
+# LANGUAGES=(ar de en es fr it ja pt ru zh zh-hans zh-hant)
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
 BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"
@@ -43,8 +43,8 @@ ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
 CHROOT_MANIFEST="${BUILD_DIR}/chroot.manifest"
 LIVE_MANIFEST="${BUILD_DIR}/live.manifest"
 
-BASE_IMG_FILE="${BUILD_DIR}/pop-os.base.img"
-LIVE_IMG_FILE="${BUILD_DIR}/pop-os.live.img"
+BASE_IMG_FILE="${BUILD_DIR}/ubuntu.base.img"
+LIVE_IMG_FILE="${BUILD_DIR}/ubuntu.live.img"
 
 CASPER_NAME="casper"
 MNT_DIR="${BUILD_DIR}/mnt"
@@ -90,10 +90,10 @@ function capture_and_log {
 	done
 }
 
-if [[ "${EUID:-$(id -u)}" != 0 ]]; then
-	error "This script must be run as root."
-	exit 1
-fi
+# if [[ "${EUID:-$(id -u)}" != 0 ]]; then
+# 	error "This script must be run as root."
+# 	exit 1
+# fi
 
 # Source: https://stackoverflow.com/a/17841619
 function join_by { local IFS="$1"; shift; echo "$*"; }
