@@ -37,15 +37,9 @@ mount "${LOOP_DEV}p1" "${ROOTFS_LIVE_DIR}/boot/efi"
 info "Syncing live EFI files to ESP"
 rsync -rv "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/boot/efi/"
 
-# XXX
-cp -f "${FS_COMMON_DIR}/etc/initramfs-tools/modules" "${ROOTFS_LIVE_DIR}/etc/initramfs-tools/modules"
-
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_LIVE_DIR}"
 cp -f "${SCRIPTS_DIR}/live/chroot-live.sh" "${ROOTFS_LIVE_DIR}"
 cp -rf "${FS_LIVE_DEBS_DIR}" "${ROOTFS_LIVE_DIR}/debs"
-
-info "Copying gpg key to rootfs"
-gpg --batch --yes --export "${RELEASE_SIGN_KEY}" > "${ROOTFS_LIVE_DIR}/etc/apt/trusted.gpg.d/cdrom-pool.gpg"
 
 info "Bind mounting apt cache"
 mkdir -p "${ROOTFS_LIVE_DIR}/var/cache/apt/archives"

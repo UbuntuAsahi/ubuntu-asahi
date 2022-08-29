@@ -16,9 +16,6 @@ UBUNTU_CODE=kinetic
 UBUNTU_NAME="Kinetic Kudu"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
-# Change this for production!
-RELEASE_SIGN_KEY=${RELEASE_SIGN_KEY:-5D59E46F74BC1810}
-
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-desktop)
 LIVE_PKGS=(casper gparted firefox ubiquity ubiquity-casper)
 HOLD_PKGS=()
