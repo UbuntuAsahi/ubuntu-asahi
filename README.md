@@ -49,3 +49,9 @@ cd asahi-ubuntu
 # Clean the build folder
 ./clean.sh
 ```
+
+### Related Projects
+
+- [Pop_OS! arm64](https://github.com/pop-os/pop-arm64/)
+- [m1-debian](https://git.zerfleddert.de/cgi-bin/gitweb.cgi/m1-debian)
+- [asahi-fedora-builder](https://github.com/leifliddy/asahi-fedora-builder]
