@@ -31,7 +31,7 @@ The live GPT image file will be output to `build/ubuntu.live.img`.
 
 ```sh
 # Go to the build folder
-cd asahi-ubuntu/build
+cd ubuntu-asahi/build
 # Re-build the live parts of the image
 sudo ../scripts/live/04-setup-live-rootfs.sh && \
 	sudo ../scripts/live/05-setup-pool.sh && \
@@ -45,7 +45,7 @@ Once again, the live GPT image file will be output to `build/ubuntu.live.img`.
 The `clean.sh` script will do exactly what it says - it will clean up the `build` folder, except for the `cache` folder, which is used by debootstrap to cache debs.
 
 ```sh
-cd asahi-ubuntu
+cd ubuntu-asahi
 # Clean the build folder
 ./clean.sh
 ```
