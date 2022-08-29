@@ -18,7 +18,7 @@ sudo apt-get install binfmt-support qemu qemu-user-static
 ### Build everything
 
 ```sh
-cd asahi-ubuntu
+cd ubuntu-asahi
 # Build the entire live image
 sudo ./build-generic.sh
 ```
