@@ -8,5 +8,6 @@ set -xe
 
 rm -rf build/rootfs.base
 rm -rf build/rootfs.live
-rm -rf build/pop-os.img
+rm -rf build/ubuntu.base.img
+rm -rf build/ubuntu.live.img
 rm -rf build/mnt
