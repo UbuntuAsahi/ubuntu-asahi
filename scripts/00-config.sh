@@ -12,15 +12,15 @@ DISTRO_VERSION=22.04
 DISTRO_VOLUME_LABEL="Ubuntu ${DISTRO_VERSION} arm64"
 DISTRO_EPOCH="${SOURCE_DATE_EPOCH}"
 DISTRO_DATE="$(date --date=@"${SOURCE_DATE_EPOCH}" +%Y%m%d)"
-UBUNTU_CODE=kinetic
-UBUNTU_NAME="Kinetic Kudu"
+UBUNTU_CODE=jammy
+UBUNTU_NAME="Jammy Jellyfish"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
-DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-desktop)
-LIVE_PKGS=(casper gparted firefox ubiquity ubiquity-casper)
+DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-desktop linux-firmware)
+LIVE_PKGS=(casper gparted ubiquity ubiquity-casper firefox)
 HOLD_PKGS=()
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
-MAIN_POOL=(at dfu-programmer efibootmgr ethtool libfl2 lm-sensors pm-utils postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd xbacklight linux-firmware)
+MAIN_POOL=() # at efibootmgr ethtool libfl2 lm-sensors postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd xbacklight linux-firmware)
 # LANGUAGES=(ar de en es fr it ja pt ru zh zh-hans zh-hant)
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
@@ -29,10 +29,11 @@ CACHE_DIR="${BUILD_DIR}/cache"
 
 FS_DIR="$(realpath "${SCRIPTS_DIR}/../fs")"
 FS_COMMON_DIR="${FS_DIR}/common"
+FS_DEBS_DIR="${FS_DIR}/debs"
+FS_FIRMWARE_DIR="${FS_DIR}/firmware"
 FS_LIVE_EFI_DIR="${FS_DIR}/live-efi"
 FS_LIVE_DIR="${FS_DIR}/live"
 FS_POOL_DIR="${FS_DIR}/pool"
-FS_LIVE_DEBS_DIR="${FS_DIR}/live-debs"
 
 ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"
 ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"

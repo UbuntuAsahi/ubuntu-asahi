@@ -28,6 +28,9 @@ cp -f "${BASE_IMG_FILE}" "${LIVE_IMG_FILE}"
 info "Syncing live files to rootfs.live"
 rsync -arv "${FS_LIVE_DIR}/" "${ROOTFS_LIVE_DIR}/"
 
+# fstab must be empty for casper
+rm -rf "${ROOTFS_LIVE_DIR}/etc/fstab"
+
 # Mount the EFI system partition
 info "Mounting EFI partition to /boot/efi"
 LOOP_DEV=$(losetup --find --show --partscan "${LIVE_IMG_FILE}")
@@ -35,11 +38,12 @@ mkdir -p "${ROOTFS_LIVE_DIR}/boot/efi"
 mount "${LOOP_DEV}p1" "${ROOTFS_LIVE_DIR}/boot/efi"
 
 info "Syncing live EFI files to ESP"
+rm -rf "${ROOTFS_LIVE_DIR}/boot/efi/*"
 rsync -rv "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/boot/efi/"
 
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_LIVE_DIR}"
 cp -f "${SCRIPTS_DIR}/live/chroot-live.sh" "${ROOTFS_LIVE_DIR}"
-cp -rf "${FS_LIVE_DEBS_DIR}" "${ROOTFS_LIVE_DIR}/debs"
+cp -rf "${FS_DEBS_DIR}" "${ROOTFS_LIVE_DIR}/debs"
 
 info "Bind mounting apt cache"
 mkdir -p "${ROOTFS_LIVE_DIR}/var/cache/apt/archives"
