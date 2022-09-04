@@ -16,7 +16,7 @@ UBUNTU_CODE=jammy
 UBUNTU_NAME="Jammy Jellyfish"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
-DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-desktop linux-firmware)
+DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-desktop linux-image-5.19.5-6-asahi linux-modules-5.19.5-6-asahi linux-headers-5.19.5-6-asahi linux-firmware)
 LIVE_PKGS=(casper gparted ubiquity ubiquity-casper firefox)
 HOLD_PKGS=()
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
