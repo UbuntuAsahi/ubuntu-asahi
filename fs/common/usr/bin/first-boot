@@ -1,8 +1,0 @@
-#!/bin/bash
-set -e
-# Run kernelstub
-kernelstub --log-file /var/log/kernelstub-firstboot.log
-# Remove old vmlinuz and initrd (kernelstub will have created new ones)
-rm -f /boot/efi/{vmlinuz,initrd.gz}
-
-systemctl disable first-boot
