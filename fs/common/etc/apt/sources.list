@@ -1,2 +1,9 @@
-deb http://ports.ubuntu.com/ubuntu-ports kinetic main
-# deb http://ports.ubuntu.com/ubuntu-ports jammy-proposed main
+deb http://ports.ubuntu.com/ubuntu-ports jammy main restricted
+deb http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted
+deb http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted
+
+## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
+## team. Also, please note that software in universe WILL NOT receive any
+## review or updates from the Ubuntu security team.
+deb http://ports.ubuntu.com/ubuntu-ports jammy universe
+deb http://ports.ubuntu.com/ubuntu-ports jammy-updates universe
