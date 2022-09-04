@@ -20,6 +20,7 @@ trap cleanup EXIT
 # as we are getting ready to run them inside our rootfs.
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_BASE_DIR}"
 cp -f "${SCRIPTS_DIR}/chroot-base.sh" "${ROOTFS_BASE_DIR}"
+cp -rf "${FS_DEBS_DIR}" "${ROOTFS_BASE_DIR}/debs"
 
 # Mount the EFI system partition
 info "Mounting EFI partition"

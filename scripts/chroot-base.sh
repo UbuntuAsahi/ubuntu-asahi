@@ -13,6 +13,18 @@ echo "nameserver 1.1.1.1" > /etc/resolv.conf
 # We gotta make sure our package database is up-to-date
 eatmydata apt-get --yes update 2>&1| capture_and_log "apt update"
 
+# Install local debs (like a custom kernel)
+NUM_DEBS_TO_INSTALL=$(find /debs -name "*.deb" -type f | wc -l)
+if [ ${NUM_DEBS_TO_INSTALL} -gt 0 ]; then
+    info "Found ${NUM_DEBS_TO_INSTALL} extra debs to install"
+    eatmydata apt-get --yes install /debs/*.deb 2>&1| capture_and_log "install custom debs"
+fi
+rm -rf /debs
+
+if [ ${#RM_PKGS[@]} -ne 0 ]; then
+    apt-get purge ${RM_PKGS[@]} 2>&1| capture_and_log "remove packages"
+fi
+
 # Then, we're going to mark packages that we don't want to install as "held",
 # so, well, they don't get installed!
 if [ ${#HOLD_PKGS[@]} -ne 0 ]; then
