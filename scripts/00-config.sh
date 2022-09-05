@@ -16,12 +16,12 @@ UBUNTU_CODE=jammy
 UBUNTU_NAME="Jammy Jellyfish"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
-DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-desktop linux-image-5.19.5-6-asahi linux-modules-5.19.5-6-asahi linux-headers-5.19.5-6-asahi linux-firmware)
+DISTRO_PKGS=(ubuntu-minimal ubuntu-standard linux-image-5.19.5-6-asahi linux-modules-5.19.5-6-asahi linux-headers-5.19.5-6-asahi linux-firmware)
 LIVE_PKGS=(casper gparted ubiquity ubiquity-casper firefox)
+DISK_PKGS=(ubuntu-desktop)
 HOLD_PKGS=()
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
 MAIN_POOL=() # at efibootmgr ethtool libfl2 lm-sensors postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd xbacklight linux-firmware)
-# LANGUAGES=(ar de en es fr it ja pt ru zh zh-hans zh-hant)
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
 BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"
@@ -29,19 +29,22 @@ CACHE_DIR="${BUILD_DIR}/cache"
 
 FS_DIR="$(realpath "${SCRIPTS_DIR}/../fs")"
 FS_COMMON_DIR="${FS_DIR}/common"
+FS_DISK_DIR="${FS_DIR}/disk"
+FS_LIVE_DIR="${FS_DIR}/live"
+FS_LIVE_EFI_DIR="${FS_DIR}/live-efi"
+FS_DISK_EFI_DIR="${FS_DIR}/disk-efi"
 FS_DEBS_DIR="${FS_DIR}/debs"
 FS_FIRMWARE_DIR="${FS_DIR}/firmware"
-FS_LIVE_EFI_DIR="${FS_DIR}/live-efi"
-FS_LIVE_DIR="${FS_DIR}/live"
 FS_POOL_DIR="${FS_DIR}/pool"
 
 ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"
+ROOTFS_DISK_DIR="${BUILD_DIR}/rootfs.disk"
 ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
 
 CHROOT_MANIFEST="${BUILD_DIR}/chroot.manifest"
 LIVE_MANIFEST="${BUILD_DIR}/live.manifest"
 
-BASE_IMG_FILE="${BUILD_DIR}/ubuntu.base.img"
+DISK_IMG_FILE="${BUILD_DIR}/ubuntu.disk.img"
 LIVE_IMG_FILE="${BUILD_DIR}/ubuntu.live.img"
 
 CASPER_NAME="casper"

@@ -39,6 +39,21 @@ sed -i \
 
 update-initramfs -c -k all 2>&1| capture_and_log "updating initramfs"
 
+# We need to install the systemd-boot EFI bootloader.
+info "Installing systemd-boot"
+bootctl install --no-variables --esp-path=/boot/efi 2>&1| capture_and_log "bootctl install"
+
+# systemd-boot on arm64 doesn't support compressed kernels,
+# so we have to un-gzip vmlinuz, and then copy it back to the ESP.
+info "Copying kernel and initrd to EFI"
+ACTUAL_VMLINUZ="/boot/$(readlink /boot/vmlinuz)"
+ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
+cp "$ACTUAL_VMLINUZ" /tmp/vmlinuz.gz
+gzip -d /tmp/vmlinuz.gz
+cp -f /tmp/vmlinuz /boot/efi/vmlinuz
+rm -f /tmp/vmlinuz
+cp -f "$ACTUAL_INITRD" /boot/efi/initrd.gz
+
 info "Copying new initrd to /boot/efi/${CASPER_NAME}"
 ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
 rm -f "/boot/efi/initrd.gz"

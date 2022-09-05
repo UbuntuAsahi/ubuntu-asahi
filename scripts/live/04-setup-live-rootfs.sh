@@ -21,10 +21,6 @@ info "Copying rootfs.base to rootfs.live"
 rm -rf "${ROOTFS_LIVE_DIR}"
 cp -a "${ROOTFS_BASE_DIR}" "${ROOTFS_LIVE_DIR}"
 
-info "Copying ubuntu.base.img to ubuntu.live.img"
-rm -f "${LIVE_IMG_FILE}"
-cp -f "${BASE_IMG_FILE}" "${LIVE_IMG_FILE}"
-
 info "Syncing live files to rootfs.live"
 rsync -arv "${FS_LIVE_DIR}/" "${ROOTFS_LIVE_DIR}/"
 

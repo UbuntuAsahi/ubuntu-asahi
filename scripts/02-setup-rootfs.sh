@@ -7,12 +7,7 @@ source "$(dirname "$(readlink -f "$0")")/00-config.sh"
 STARTING_DIR="$PWD"
 function cleanup {
 	cd "${STARTING_DIR}"
-	umount -Rf "${ROOTFS_BASE_DIR}/boot/efi" || true
 	umount -Rf "${ROOTFS_BASE_DIR}/var/cache/apt/archives" || true
-	losetup --associated "${BASE_IMG_FILE}" | cut -d ':' -f1 | while read LODEV
-	do
-		sudo losetup --detach "$LODEV"
-	done
 }
 trap cleanup EXIT
 
@@ -21,11 +16,6 @@ trap cleanup EXIT
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_BASE_DIR}"
 cp -f "${SCRIPTS_DIR}/chroot-base.sh" "${ROOTFS_BASE_DIR}"
 cp -rf "${FS_DEBS_DIR}" "${ROOTFS_BASE_DIR}/debs"
-
-# Mount the EFI system partition
-info "Mounting EFI partition"
-LOOP_DEV=$(losetup --find --show --partscan "${BASE_IMG_FILE}")
-mount "${LOOP_DEV}p1" "${ROOTFS_BASE_DIR}/boot/efi"
 
 info "Bind mounting apt cache"
 mkdir -p "${ROOTFS_BASE_DIR}/var/cache/apt/archives"

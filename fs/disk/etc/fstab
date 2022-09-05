@@ -1,0 +1,2 @@
+LABEL=UBUNTU_ROOT	/		ext4	defaults,x-systemd.growfs	0	0
+LABEL=UBUNTU_EFI	/boot/efi	vfat	defaults			0	1

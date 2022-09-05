@@ -36,19 +36,6 @@ if [ ${#DISTRO_PKGS[@]} -ne 0 ]; then
     eatmydata apt-get --yes install ${DISTRO_PKGS[@]} 2>&1| capture_and_log "install ubuntu-desktop"
 fi
 
-# # Install language packs
-# if [ ${#LANGUAGES[@]} -ne 0 ]; then
-#     pkgs=""
-#     for language in ${LANGUAGES[@]}
-#     do
-#         info "Adding language '${language}'"
-#         pkgs+=" $(XDG_CURRENT_DESKTOP=GNOME check-language-support --show-installed --language="${language}")"
-#     done
-#     if [ -n "$pkgs" ]; then
-#         eatmydata apt-get --yes install --no-install-recommends $pkgs 2>&1| capture_and_log "install language packs"
-#     fi
-# fi
-
 # Upgrade all packages.
 eatmydata apt-get --yes dist-upgrade --allow-downgrades 2>&1| capture_and_log "apt upgrade"
 
@@ -69,21 +56,6 @@ eatmydata apt-get --yes clean 2>&1| capture_and_log "apt clean"
 
 info "Synchronizing changes to disk"
 sync
-
-# We need to install the systemd-boot EFI bootloader.
-info "Installing systemd-boot"
-bootctl install --no-variables --esp-path=/boot/efi 2>&1| capture_and_log "bootctl install"
-
-# systemd-boot on arm64 doesn't support compressed kernels,
-# so we have to un-gzip vmlinuz, and then copy it back to the ESP.
-info "Copying kernel and initrd to EFI"
-ACTUAL_VMLINUZ="/boot/$(readlink /boot/vmlinuz)"
-ACTUAL_INITRD="/boot/$(readlink /boot/initrd.img)"
-cp "$ACTUAL_VMLINUZ" /tmp/vmlinuz.gz
-gzip -d /tmp/vmlinuz.gz
-cp -f /tmp/vmlinuz /boot/efi/vmlinuz
-rm -f /tmp/vmlinuz
-cp -f "$ACTUAL_INITRD" /boot/efi/initrd.gz
 
 # Dunno what this does, honestly.
 info "Creating missing NetworkManager config"

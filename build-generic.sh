@@ -19,9 +19,14 @@ set -xe
 
 mkdir -p build
 cd build
-../scripts/01-setup-efi-img.sh
-../scripts/02-build-base-rootfs.sh
-../scripts/03-setup-rootfs.sh
-../scripts/live/04-setup-live-rootfs.sh
-../scripts/live/05-setup-pool.sh
-../scripts/live/06-build-live-image.sh
+
+../scripts/01-build-base-rootfs.sh
+../scripts/02-setup-rootfs.sh
+
+# ../scripts/live/03-setup-efi-img.sh
+# ../scripts/live/04-setup-live-rootfs.sh
+# ../scripts/live/05-setup-pool.sh
+# ../scripts/live/06-build-live-image.sh
+# 
+# ../disk/03-setup-disk-rootfs.sh
+# ../disk/04-build-live-image.sh
