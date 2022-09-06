@@ -44,9 +44,6 @@ initrd /boot/initrd.img
 boot
 END
 
-# Enable service to update-grub after boot
-systemctl enable first-boot
-
 sync
 umount -Rf "${MNT_DIR}"
 

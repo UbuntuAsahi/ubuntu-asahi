@@ -50,6 +50,9 @@ ubuntu:ubuntu
 END
 touch "/etc/machine-id"
 
+# Enable service to update-grub after boot
+systemctl enable first-boot
+
 # Clean up any left-behind crap, such as tempfiles and machine-id.
 info "Cleaning up data..."
 rm -rf /tmp/*
