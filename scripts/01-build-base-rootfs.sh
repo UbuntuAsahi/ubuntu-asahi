@@ -23,6 +23,8 @@ mkdir -p cache
 # 
 # eatmydata is just there to speed things up, as apt/dpkg LOVES to constantly fsync during
 # EVERY. SINGLE. PACKAGE.
+mkdir -p "${ROOTFS_BASE_DIR}"
+chown root:root "${ROOTFS_BASE_DIR}"
 eatmydata $DEBOOTSTRAP \
 		--arch=arm64 \
 		--cache-dir="${CACHE_DIR}" \
@@ -36,7 +38,7 @@ info "Syncing data to filesystem"
 sync
 
 info "Syncing common files to rootfs"
-rsync -arv "${FS_COMMON_DIR}/" "${ROOTFS_BASE_DIR}/" 2>&1| capture_and_log "rsync common files"
+rsync -rv "${FS_COMMON_DIR}/" "${ROOTFS_BASE_DIR}/" 2>&1| capture_and_log "rsync common files"
 cp -rf "${FS_FIRMWARE_DIR}" "${ROOTFS_BASE_DIR}/usr/lib/"
 
 # Create ESP dir, to be mounted later

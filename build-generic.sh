@@ -28,5 +28,5 @@ cd build
 # ../scripts/live/05-setup-pool.sh
 # ../scripts/live/06-build-live-image.sh
 # 
-# ../disk/03-setup-disk-rootfs.sh
-# ../disk/04-build-live-image.sh
+../scripts/disk/03-setup-disk-rootfs.sh
+../scripts/disk/04-build-disk-image.sh

@@ -18,10 +18,13 @@ GNOME_INITIAL_SETUP_STAMP=21.04
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard linux-image-5.19.5-6-asahi linux-modules-5.19.5-6-asahi linux-headers-5.19.5-6-asahi linux-firmware)
 LIVE_PKGS=(casper gparted ubiquity ubiquity-casper firefox)
-DISK_PKGS=(ubuntu-desktop)
+DISK_PKGS=(grub-efi ubuntu-desktop)
 HOLD_PKGS=()
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
 MAIN_POOL=() # at efibootmgr ethtool libfl2 lm-sensors postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd xbacklight linux-firmware)
+
+EFI_UUID=2ABF-9F91
+ROOT_UUID=87c6b0ce-3bb6-4dc2-9298-3a799bbb5994
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
 BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"

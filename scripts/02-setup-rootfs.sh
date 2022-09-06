@@ -35,3 +35,5 @@ systemd-nspawn \
 cp -f "${ROOTFS_BASE_DIR}/manifest" "${CHROOT_MANIFEST}"
 rm -f "${ROOTFS_BASE_DIR}/chroot-base.sh"
 rm -f "${ROOTFS_BASE_DIR}/manifest"
+
+perl -p -i -e 's/root:x:/root::/' "${ROOTFS_BASE_DIR}/etc/passwd"

@@ -6,15 +6,14 @@
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
 			"package": "ubuntu-base.zip",
-			"supported_fw": [
-				"12.3"
-			],
+			"supported_fw": ["12.3", "12.4"],
 			"partitions": [
 				{
 					"name": "EFI",
 					"type": "EFI",
 					"size": "500MB",
 					"format": "fat",
+					"volume_id": "0x2abf9f91",
 					"copy_firmware": true,
 					"copy_installer_data": true,
 					"source": "esp"
@@ -24,7 +23,7 @@
 					"type": "Linux",
 					"size": "6GB",
 					"expand": true,
-					"image": "media"
+					"image": "disk.img"
 				}
 			]
 		}
