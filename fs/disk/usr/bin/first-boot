@@ -1,5 +1,0 @@
-#!/bin/bash
-set -e
-
-update-grub
-systemctl disable first-boot
