@@ -44,10 +44,11 @@ grub-mkimage \
 rm -rf /etc/grub.d/30_uefi-firmware
 
 info "Adding user ubuntu"
-useradd ubuntu -s /bin/bash -m -G sudo
+useradd ubuntu -s /bin/bash -m -G adm,dialout,cdrom,sudo,dip,plugdev,lpadmin
 chpasswd << 'END'
 ubuntu:ubuntu
 END
+usermod -L root
 touch "/etc/machine-id"
 
 # Clean up any left-behind crap, such as tempfiles and machine-id.
