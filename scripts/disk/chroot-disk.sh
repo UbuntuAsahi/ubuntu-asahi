@@ -30,7 +30,7 @@ cp -r /usr/lib/grub/arm64-efi /boot/grub/
 rm -f /boot/grub/arm64-efi/*.module
 mkdir -p /boot/grub/{fonts,locale}
 cp /usr/share/grub/unicode.pf2 /boot/grub/fonts
-echo "GRUB_DISABLE_OS_PROBER=true" > "/etc/default/grub"
+echo "GRUB_DISABLE_OS_PROBER=true" >> "/etc/default/grub"
 
 info "Generating grub image"
 grub-mkimage \
