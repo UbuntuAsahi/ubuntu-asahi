@@ -17,11 +17,11 @@ UBUNTU_NAME="Jammy Jellyfish"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
 DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-asahi linux-firmware)
-LIVE_PKGS=(casper gparted ubiquity ubiquity-casper firefox)
+LIVE_PKGS=(casper gparted ubiquity ubiquity-casper)
 DISK_PKGS=(grub-efi ubuntu-desktop)
 HOLD_PKGS=()
 RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
-MAIN_POOL=() # at efibootmgr ethtool libfl2 lm-sensors postfix powermgmt-base python3-debian python3-distro python3-evdev python3-systemd xbacklight linux-firmware)
+MAIN_POOL=()
 
 EFI_UUID=2ABF-9F91
 ROOT_UUID=87c6b0ce-3bb6-4dc2-9298-3a799bbb5994
