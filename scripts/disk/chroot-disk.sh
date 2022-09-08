@@ -49,7 +49,6 @@ chpasswd << 'END'
 ubuntu:ubuntu
 END
 usermod -L root
-touch "/etc/machine-id"
 
 # Clean up any left-behind crap, such as tempfiles and machine-id.
 info "Cleaning up data..."
