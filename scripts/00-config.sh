@@ -16,7 +16,7 @@ UBUNTU_CODE=jammy
 UBUNTU_NAME="Jammy Jellyfish"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
-DISTRO_PKGS=(ubuntu-minimal ubuntu-standard ubuntu-asahi linux-firmware)
+DISTRO_PKGS=(eatmydata ubuntu-minimal ubuntu-standard ubuntu-asahi linux-firmware)
 LIVE_PKGS=(casper gparted ubiquity ubiquity-casper)
 DISK_PKGS=(grub-efi ubuntu-desktop)
 HOLD_PKGS=()
