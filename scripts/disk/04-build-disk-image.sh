@@ -33,6 +33,7 @@ info "Copying to disk"
 rsync -aHAX \
     --exclude /files \
     --exclude '/tmp/*' \
+    --exclude '/etc/machine-id' \
     "${ROOTFS_DISK_DIR}/" "${MNT_DIR}/"
 
 info "Updating grub config"
