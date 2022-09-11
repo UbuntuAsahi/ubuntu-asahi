@@ -8,6 +8,7 @@ STARTING_DIR="$PWD"
 function cleanup {
 	cd "${STARTING_DIR}"
 	umount -Rf "${ROOTFS_BASE_DIR}/var/cache/apt/archives" || true
+	umount -Rf "${ROOTFS_BASE_DIR}" || true
 }
 trap cleanup EXIT
 
@@ -18,19 +19,16 @@ cp -f "${SCRIPTS_DIR}/chroot-base.sh" "${ROOTFS_BASE_DIR}"
 cp -rf "${FS_DEBS_DIR}" "${ROOTFS_BASE_DIR}/debs"
 
 info "Bind mounting apt cache"
+mount --bind "${ROOTFS_BASE_DIR}" "${ROOTFS_BASE_DIR}"
 mkdir -p "${ROOTFS_BASE_DIR}/var/cache/apt/archives"
 mount --bind "${CACHE_DIR}" "${ROOTFS_BASE_DIR}/var/cache/apt/archives"
 
 # Alright, here's the fun part!
-# systemd-nspawn is basically chroot, however it'll automatically
+# arch-chroot is basically chroot, however it'll automatically
 # set up all the /dev, /sys, /proc, etc mounts for us, and even
 # run a fully functioning systemd within the chroot.
-info "Spawning chroot via systemd-nspawn"
-systemd-nspawn \
-	--machine=ubuntu \
-	--resolv-conf=off \
-	--directory="${ROOTFS_BASE_DIR}" \
-	bash /chroot-base.sh
+info "Spawning chroot via arch-chroot"
+arch-chroot "${ROOTFS_BASE_DIR}" bash /chroot-base.sh
 
 cp -f "${ROOTFS_BASE_DIR}/manifest" "${CHROOT_MANIFEST}"
 rm -f "${ROOTFS_BASE_DIR}/chroot-base.sh"
