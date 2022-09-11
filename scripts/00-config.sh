@@ -37,7 +37,6 @@ FS_LIVE_DIR="${FS_DIR}/live"
 FS_LIVE_EFI_DIR="${FS_DIR}/live-efi"
 FS_DISK_EFI_DIR="${FS_DIR}/disk-efi"
 FS_DEBS_DIR="${FS_DIR}/debs"
-FS_FIRMWARE_DIR="${FS_DIR}/firmware"
 FS_POOL_DIR="${FS_DIR}/pool"
 
 ROOTFS_BASE_DIR="${BUILD_DIR}/rootfs.base"

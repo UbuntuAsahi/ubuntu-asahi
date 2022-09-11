@@ -39,7 +39,6 @@ sync
 
 info "Syncing common files to rootfs"
 rsync -rv "${FS_COMMON_DIR}/" "${ROOTFS_BASE_DIR}/" 2>&1| capture_and_log "rsync common files"
-cp -rf "${FS_FIRMWARE_DIR}" "${ROOTFS_BASE_DIR}/usr/lib/"
 
 # Create ESP dir, to be mounted later
 mkdir -p "${ROOTFS_BASE_DIR}/boot/efi"
