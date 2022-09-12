@@ -1,11 +1,11 @@
-# Ubuntu UEFI Apple Silicon Image
+# Ubuntu Apple silicon Image
 
-This is a repository that contains scripts for compiling an ARM64 UEFI image for Ubuntu.
-
+This is a repository that contains scripts for compiling Ubuntu images for
+Apple silicon hardware such as the Apple M1 and M2.
 
 ## Hosted Installer
 
-To install the prebuilt disk image run:
+To install the prebuilt image run:
 
 ```
 curl -sL https://tobhe.de/ubuntu/install > install.sh	# Download
@@ -70,6 +70,7 @@ cd ubuntu-asahi
 
 ### Related Projects
 
+- [Asahi Linux](https://asahilinux.org/)
 - [Pop_OS! arm64](https://github.com/pop-os/pop-arm64/)
 - [m1-debian](https://git.zerfleddert.de/cgi-bin/gitweb.cgi/m1-debian)
 - [asahi-fedora-builder](https://github.com/leifliddy/asahi-fedora-builder)
