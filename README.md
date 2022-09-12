@@ -3,14 +3,31 @@
 This is a repository that contains scripts for compiling an ARM64 UEFI image for Ubuntu.
 
 
+## Hosted Installer
+
+To install the prebuilt disk image run:
+
+```
+curl -sL https://tobhe.de/ubuntu/install > install.sh	# Download
+less install.sh						# Review
+sh install.sh						# Run
+```
+
+OR if you like to live dangerously:
+
+```
+curl -sL https://tobhe.de/ubuntu/install | bash
+```
+
 ## Building
 
+If you do not want to use the prebuilt disk image, you can build one yourself with the instructions below.
 
 ### Install dependencies
 
 ```sh
 # Install dependencies
-sudo apt-get install arch-install-scripts debootstrap mtools parted gnupg systemd-container eatmydata rsync git squashfs-tools zip
+sudo apt-get install arch-install-scripts debootstrap mtools parted gnupg eatmydata rsync git squashfs-tools zip
 # Install dependencies, if your builder system is NOT arm64
 sudo apt-get install binfmt-support qemu qemu-user-static
 ```
@@ -23,7 +40,8 @@ cd ubuntu-asahi
 sudo ./build-generic.sh
 ```
 
-The live GPT image file will be output to `build/ubuntu.live.img`.
+The live GPT image file will be output to `build/ubuntu.live.img`, the zip archive for the Asahi Linux installer
+will be output to `build/ubuntu.live.img.zip`.
 
 ### Rebuild live image
 
