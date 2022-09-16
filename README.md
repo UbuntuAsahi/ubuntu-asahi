@@ -19,6 +19,8 @@ OR if you like to live dangerously:
 curl -sL https://tobhe.de/ubuntu/install | bash
 ```
 
+The default username and password are both **ubuntu**. Root access can be achieved via `sudo`.
+
 ## Building
 
 If you do not want to use the prebuilt disk image, you can build one yourself with the instructions below.
