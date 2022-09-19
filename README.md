@@ -21,6 +21,12 @@ curl -sL https://tobhe.de/ubuntu/install | bash
 
 The default username and password are both **ubuntu**. Root access can be achieved via `sudo`.
 
+### Can I dual-boot macOS and Linux?
+
+Yes! The installer can automatically resize your macos partition according to your liking and install
+Ubuntu in the freed up space. Removing macos is not even supported at the moment since it is required
+to update the system firmware.
+
 ## Building
 
 If you do not want to use the prebuilt disk image, you can build one yourself with the instructions below.
