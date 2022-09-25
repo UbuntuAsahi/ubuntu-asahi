@@ -7,8 +7,7 @@ rm -f /00-config.sh
 # This is needed to allow us to connect to the internet.
 # Without this, we cannot resolve any DNS!
 info "Fixing DNS"
-rm -f /etc/resolv.conf
-echo "nameserver 1.1.1.1" > /etc/resolv.conf
+ln -fs /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 # We gotta make sure our package database is up-to-date
 eatmydata apt-get --yes update 2>&1| capture_and_log "apt update"
