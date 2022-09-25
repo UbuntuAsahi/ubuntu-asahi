@@ -52,8 +52,17 @@ info "Packing disk"
 cp "${DISK_IMG_FILE}" "${MNT_DIR}/disk.img"
 mkdir -p "${MNT_DIR}/esp/EFI/BOOT"
 cp "${ROOTFS_DISK_DIR}/boot/grub/arm64-efi/core.efi" "${MNT_DIR}/esp/EFI/BOOT/BOOTAA64.EFI"
+
+# Install m1n1
+m1n1="${ROOTFS_DISK_DIR}/usr/share/m1n1/m1n1.bin"
+uboot="${ROOTFS_DISK_DIR}/usr/share/u-boot-asahi/u-boot-nodtb.bin"
+dtbs="${ROOTFS_DISK_DIR}/lib/firmware/*-asahi/device-tree/apple/*.dtb"
+target="${MNT_DIR}/esp/m1n1/boot.bin"
 mkdir -p "${MNT_DIR}/esp/m1n1/"
-cp "${FS_DIR}/boot.bin" "${MNT_DIR}/esp/m1n1/boot.bin"
+cat ${m1n1} ${DTBS} \
+    <(gzip -c ${uboot}) \
+    >"${target}.new"
+mv -f "${target}.new" "$target"
 
 info "Compressing"
 rm -f "${DISK_IMG_FILE}.zip"
