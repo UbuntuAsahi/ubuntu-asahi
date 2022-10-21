@@ -59,7 +59,7 @@ uboot="${ROOTFS_DISK_DIR}/usr/share/u-boot-asahi/u-boot-nodtb.bin"
 dtbs="${ROOTFS_DISK_DIR}/lib/firmware/*-asahi/device-tree/apple/*.dtb"
 target="${MNT_DIR}/esp/m1n1/boot.bin"
 mkdir -p "${MNT_DIR}/esp/m1n1/"
-cat ${m1n1} ${DTBS} \
+cat ${m1n1} ${dtbs} \
     <(gzip -c ${uboot}) \
     >"${target}.new"
 mv -f "${target}.new" "$target"
