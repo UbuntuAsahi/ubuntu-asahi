@@ -24,11 +24,6 @@ info "Fixing fstab"
 sed -i "s|ROOT_UUID|${ROOT_UUID}|g;s|EFI_UUID|${EFI_UUID}|g" \
     "${ROOTFS_DISK_DIR}/etc/fstab"
 
-info "Syncing disk EFI files to ESP"
-mkdir -p "${ROOTFS_DISK_DIR}/boot/efi"
-rm -rf "${ROOTFS_DISK_DIR}/boot/efi/*"
-rsync -arv "${FS_DISK_EFI_DIR}/" "${ROOTFS_DISK_DIR}/boot/efi/"
-
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_DISK_DIR}"
 cp -f "${SCRIPTS_DIR}/disk/chroot-disk.sh" "${ROOTFS_DISK_DIR}"
 cp -rf "${FS_DEBS_DIR}" "${ROOTFS_DISK_DIR}/debs"
