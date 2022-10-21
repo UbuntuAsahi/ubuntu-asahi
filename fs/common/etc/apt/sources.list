@@ -2,7 +2,7 @@
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
-deb http://ports.ubuntu.com/ubuntu-ports/ jammy multiverse main universe restricted
-deb http://ports.ubuntu.com/ubuntu-ports/ jammy-security main multiverse universe restricted
-deb http://ports.ubuntu.com/ubuntu-ports/ jammy-updates main multiverse universe restricted
-deb http://ports.ubuntu.com/ubuntu-ports/ jammy-backports main multiverse universe restricted
+deb http://ports.ubuntu.com/ubuntu-ports/ kinetic multiverse main universe restricted
+deb http://ports.ubuntu.com/ubuntu-ports/ kinetic-security main multiverse universe restricted
+deb http://ports.ubuntu.com/ubuntu-ports/ kinetic-updates main multiverse universe restricted
+deb http://ports.ubuntu.com/ubuntu-ports/ kinetic-backports main multiverse universe restricted
