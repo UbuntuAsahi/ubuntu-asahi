@@ -1,6 +1,6 @@
-# Ubuntu Apple silicon Image
+# Ubuntu Apple Silicon Image
 
-This is a repository that contains scripts for compiling Ubuntu images for
+This is repository contains scripts for compiling Ubuntu images for
 Apple silicon hardware such as the Apple M1 and M2.
 
 ## Hosted Installer
@@ -13,13 +13,14 @@ less install.sh						# Review
 sh install.sh						# Run
 ```
 
-OR if you like to live dangerously:
+or if you like to live dangerously:
 
 ```
 curl -sL https://tobhe.de/ubuntu/install | bash
 ```
 
 The installer offers a choice of different Ubuntu releases and build configurations.
+
 Currently supported are:
 
 - Ubuntu 22.10 Desktop
@@ -58,21 +59,6 @@ sudo ./build-generic.sh
 
 The live GPT image file will be output to `build/ubuntu.live.img`, the zip archive for the Asahi Linux installer
 will be output to `build/ubuntu.live.img.zip`.
-
-### Rebuild live image
-
-**Note**: _you must have ran build-generic once already, or at least the non-live scripts!_
-
-```sh
-# Go to the build folder
-cd ubuntu-asahi/build
-# Re-build the live parts of the image
-sudo ../scripts/live/04-setup-live-rootfs.sh && \
-	sudo ../scripts/live/05-setup-pool.sh && \
-	sudo ../scripts/live/06-build-live-image.sh
-```
-
-Once again, the live GPT image file will be output to `build/ubuntu.live.img`.
 
 ### Clean
 
