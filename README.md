@@ -5,7 +5,7 @@ Apple silicon hardware such as the Apple M1 and M2.
 
 ## Hosted Installer
 
-To install the prebuilt image run:
+To install a prebuilt image run:
 
 ```
 curl -sL https://tobhe.de/ubuntu/install > install.sh	# Download
@@ -18,6 +18,14 @@ OR if you like to live dangerously:
 ```
 curl -sL https://tobhe.de/ubuntu/install | bash
 ```
+
+The installer offers a choice of different Ubuntu releases and build configurations.
+Currently supported are:
+
+- Ubuntu 22.10 Desktop
+- Ubuntu 22.10 Server
+- Ubuntu 22.04 Desktop
+- Ubuntu 22.04 Server
 
 The default username and password are both **ubuntu**. Root access can be achieved via `sudo`.
 
