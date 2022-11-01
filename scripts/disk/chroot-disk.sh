@@ -44,7 +44,7 @@ grub-mkimage \
 rm -rf /etc/grub.d/30_uefi-firmware
 
 info "Adding user ubuntu"
-useradd ubuntu -s /bin/bash -m -G adm,dialout,cdrom,sudo,dip,plugdev,lpadmin
+useradd ubuntu -s /bin/bash -m -G adm,dialout,cdrom,sudo,dip,plugdev
 chpasswd << 'END'
 ubuntu:ubuntu
 END
