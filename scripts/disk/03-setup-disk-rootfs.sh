@@ -15,10 +15,10 @@ trap cleanup EXIT
 
 info "Copying rootfs.base to rootfs.disk"
 rm -rf "${ROOTFS_DISK_DIR}"
-rsync -ar "${ROOTFS_BASE_DIR}/" "${ROOTFS_DISK_DIR}/"
+rsync -arAHX "${ROOTFS_BASE_DIR}/" "${ROOTFS_DISK_DIR}/"
 
 info "Syncing disk files to rootfs.disk"
-rsync -rv "${FS_DISK_DIR}/" "${ROOTFS_DISK_DIR}/"
+rsync -arAHX "${FS_DISK_DIR}/" "${ROOTFS_DISK_DIR}/"
 
 info "Fixing fstab"
 sed -i "s|ROOT_UUID|${ROOT_UUID}|g;s|EFI_UUID|${EFI_UUID}|g" \
