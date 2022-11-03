@@ -38,7 +38,7 @@ info "Syncing data to filesystem"
 sync
 
 info "Syncing common files to rootfs"
-rsync -rv "${FS_COMMON_DIR}/" "${ROOTFS_BASE_DIR}/" 2>&1| capture_and_log "rsync common files"
+rsync -arHAX --chown root:root "${FS_COMMON_DIR}/" "${ROOTFS_BASE_DIR}/" 2>&1| capture_and_log "rsync common files"
 
 # Create ESP dir, to be mounted later
 mkdir -p "${ROOTFS_BASE_DIR}/boot/efi"
