@@ -22,7 +22,7 @@ rm -rf "${ROOTFS_LIVE_DIR}"
 cp -a "${ROOTFS_BASE_DIR}" "${ROOTFS_LIVE_DIR}"
 
 info "Syncing live files to rootfs.live"
-rsync -arv "${FS_LIVE_DIR}/" "${ROOTFS_LIVE_DIR}/"
+rsync -arAHX --chown root:root "${FS_LIVE_DIR}/" "${ROOTFS_LIVE_DIR}/"
 
 # fstab must be empty for casper
 rm -rf "${ROOTFS_LIVE_DIR}/etc/fstab"
@@ -35,7 +35,7 @@ mount "${LOOP_DEV}p1" "${ROOTFS_LIVE_DIR}/boot/efi"
 
 info "Syncing live EFI files to ESP"
 rm -rf "${ROOTFS_LIVE_DIR}/boot/efi/*"
-rsync -rv "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/boot/efi/"
+rsync -arAHX --chown root:root "${FS_LIVE_EFI_DIR}/" "${ROOTFS_LIVE_DIR}/boot/efi/"
 
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${ROOTFS_LIVE_DIR}"
 cp -f "${SCRIPTS_DIR}/live/chroot-live.sh" "${ROOTFS_LIVE_DIR}"

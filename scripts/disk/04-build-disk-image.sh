@@ -28,6 +28,7 @@ info "Mounting image"
 rm -rf "${MNT_DIR}"
 mkdir -p "${MNT_DIR}"
 mount "${LOOP_DEV}" "${MNT_DIR}"
+chown root:root "${MNT_DIR}"
 
 info "Copying to disk"
 rsync -aHAX \
