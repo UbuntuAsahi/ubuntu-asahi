@@ -1,6 +1,6 @@
 # Ubuntu Apple Silicon Image
 
-This is repository contains scripts for compiling Ubuntu images for
+This is repository contains scripts for compiling native Ubuntu images for
 Apple silicon hardware such as the Apple M1 and M2.
 
 ## Hosted Installer
