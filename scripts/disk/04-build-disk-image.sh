@@ -68,3 +68,4 @@ mv -f "${target}.new" "$target"
 info "Compressing"
 rm -f "${DISK_IMG_FILE}.zip"
 ( cd "${MNT_DIR}"; zip -1 -r "${DISK_IMG_FILE}.zip" * )
+rm -rf "${MNT_DIR}"
