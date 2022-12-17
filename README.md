@@ -25,6 +25,8 @@ Currently supported are:
 
 - Ubuntu 22.10 Desktop
 - Ubuntu 22.10 Server
+- Ubuntu 22.04 Desktop
+- Ubuntu 22.04 Server
 
 The default username and password are both **ubuntu**. Root access can be achieved via `sudo`.
 
