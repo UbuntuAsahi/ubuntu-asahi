@@ -19,7 +19,7 @@ trap cleanup EXIT
 
 info "Copying rootfs.base to rootfs.live"
 rm -rf "${ROOTFS_LIVE_DIR}"
-cp -a "${ROOTFS_BASE_DIR}" "${ROOTFS_LIVE_DIR}"
+rsync -arAHX "${ROOTFS_BASE_DIR}/" "${ROOTFS_LIVE_DIR}/"
 
 info "Syncing live files to rootfs.live"
 rsync -arAHX --chown root:root "${FS_LIVE_DIR}/" "${ROOTFS_LIVE_DIR}/"
