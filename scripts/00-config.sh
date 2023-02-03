@@ -17,7 +17,7 @@ UBUNTU_NAME="Kinetic Kudu"
 GNOME_INITIAL_SETUP_STAMP=21.04
 
 DISTRO_PKGS=(eatmydata ubuntu-minimal ubuntu-standard ubuntu-asahi linux-firmware)
-LIVE_PKGS=(casper gparted ubiquity ubiquity-casper)
+LIVE_PKGS=(systemd-boot casper gparted ubiquity ubiquity-casper ubuntu-desktop linux-asahi-edge)
 DISK_PKGS=(grub-efi ubuntu-desktop)
 HOLD_PKGS=()
 # RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
