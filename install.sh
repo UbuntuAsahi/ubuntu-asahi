@@ -15,7 +15,12 @@ export REPO_BASE=https://tobhe.de/ubuntu
 #TMP="$(mktemp -d)"
 TMP=/tmp/asahi-install
 
+echo
 echo "Bootstrapping installer:"
+
+if [ -e "$TMP" ]; then
+    mv "$TMP" "$TMP-$(date +%Y%m%d-%H%M%S)"
+fi
 
 mkdir -p "$TMP"
 cd "$TMP"
@@ -30,7 +35,12 @@ PKG="installer-$PKG_VER.tar.gz"
 echo "  Downloading..."
 
 curl --no-progress-meter -L -o "$PKG" "$INSTALLER_BASE/$PKG"
-curl --no-progress-meter -L -O "$INSTALLER_DATA"
+if ! curl --no-progress-meter -L -O "$INSTALLER_DATA"; then
+	echo "    Error downloading installer_data.json. GitHub might be blocked in your network."
+	echo "    Please consider using a VPN if you experience issues."
+	echo "    Trying workaround..."
+	curl --no-progress-meter -L -O "$INSTALLER_DATA_ALT"
+fi
 
 echo "  Extracting..."
 
