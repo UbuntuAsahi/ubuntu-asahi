@@ -8,6 +8,7 @@ info "Fixing DNS"
 rm -f /etc/resolv.conf
 echo "nameserver 1.1.1.1" > /etc/resolv.conf
 
+export DEBIAN_FRONTEND=noninteractive
 apt-get --yes update 2>&1| capture_and_log "apt update"
 if [ ${#LIVE_PKGS[@]} -ne 0 ]; then
     eatmydata apt-get --yes install ${LIVE_PKGS[@]} 2>&1| capture_and_log "install live utilities"
