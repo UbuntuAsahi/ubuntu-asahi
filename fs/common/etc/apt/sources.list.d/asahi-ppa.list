@@ -1,2 +1,2 @@
 # Ubuntu packages for Apple Silicon hardware
-deb [signed-by=/usr/share/keyrings/tobhe-asahi.gpg] https://ppa.launchpadcontent.net/tobhe/asahi/ubuntu kinetic main
+deb [signed-by=/usr/share/keyrings/tobhe-asahi.gpg] https://ppa.launchpadcontent.net/tobhe/asahi/ubuntu lunar main
