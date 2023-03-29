@@ -19,7 +19,7 @@ rm -rf "${DISK_IMG_FILE}"
 size="$(du -B M -s "${ROOTFS_DISK_DIR}" | cut -dM -f1)"
 size=$(($size + ($size / 8) + 64))
 fallocate -l "${size}M" ${DISK_IMG_FILE}
-mkfs.ext4 -O '^metadata_csum' -U "${ROOT_UUID}" -L "ubuntu-root" "${DISK_IMG_FILE}"
+mkfs.ext4 -O '^metadata_csum,^orphan_file' -U "${ROOT_UUID}" -L "ubuntu-root" "${DISK_IMG_FILE}"
 
 # Create a loop device for the image file
 LOOP_DEV=$(losetup --find --show --partscan "${DISK_IMG_FILE}")
@@ -41,7 +41,7 @@ info "Updating grub config"
 cat << END > "${MNT_DIR}/boot/grub/grub.cfg"
 search.fs_uuid ${ROOT_UUID} root
 set prefix=(\$root)'/boot/grub'
-linux /boot/vmlinuz
+linux /boot/vmlinuz rw quiet splash
 initrd /boot/initrd.img
 boot
 END
