@@ -41,7 +41,7 @@ info "Updating grub config"
 cat << END > "${MNT_DIR}/boot/grub/grub.cfg"
 search.fs_uuid ${ROOT_UUID} root
 set prefix=(\$root)'/boot/grub'
-linux /boot/vmlinuz rw quiet splash
+linux /boot/vmlinuz quiet splash
 initrd /boot/initrd.img
 boot
 END
