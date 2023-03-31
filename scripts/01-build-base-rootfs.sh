@@ -15,7 +15,7 @@ trap cleanup EXIT
 rm -rf "${ROOTFS_BASE_DIR}"
 
 info "Bootstrapping Ubuntu with $DEBOOTSTRAP"
-mkdir -p cache
+mkdir -p "${CACHE_DIR}"
 
 # This is where we actually CREATE our initial Ubuntu system.
 # debootstrap will fetch all the necessary packages for a base Debian/Ubuntu system,
