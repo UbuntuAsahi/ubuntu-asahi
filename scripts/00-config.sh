@@ -19,7 +19,7 @@ GNOME_INITIAL_SETUP_STAMP=21.04
 DISTRO_PKGS=(eatmydata ubuntu-minimal ubuntu-standard ubuntu-asahi linux-firmware)
 LIVE_PKGS=(systemd-boot casper gparted ubiquity ubiquity-casper ubuntu-desktop linux-asahi)
 DISK_PKGS=(grub-efi ubuntu-desktop)
-LP_DISK_PKGS(grub-efi)
+LP_DISK_PKGS=(grub-efi)
 HOLD_PKGS=()
 # RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
 RM_PKGS=()

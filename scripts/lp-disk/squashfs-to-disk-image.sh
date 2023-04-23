@@ -42,7 +42,7 @@ sed -i "s|ROOT_UUID|${ROOT_UUID}|g;s|EFI_UUID|${EFI_UUID}|g" \
     "${MNT_DIR}/etc/fstab"
 
 cp -f "${SCRIPTS_DIR}/00-config.sh" "${MNT_DIR}"
-cp -f "${SCRIPTS_DIR}/disk/chroot-disk.sh" "${MNT_DIR}"
+cp -f "${SCRIPTS_DIR}/lp-disk/chroot-disk.sh" "${MNT_DIR}"
 
 mkdir -p "${CACHE_DIR}"
 mkdir -p "${MNT_DIR}/var/cache/apt/archives"
