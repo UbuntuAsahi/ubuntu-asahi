@@ -19,6 +19,7 @@ GNOME_INITIAL_SETUP_STAMP=21.04
 DISTRO_PKGS=(eatmydata ubuntu-minimal ubuntu-standard ubuntu-asahi linux-firmware)
 LIVE_PKGS=(systemd-boot casper gparted ubiquity ubiquity-casper ubuntu-desktop linux-asahi)
 DISK_PKGS=(grub-efi ubuntu-desktop)
+LP_DISK_PKGS(grub-efi)
 HOLD_PKGS=()
 # RM_PKGS=(bus-mozc imagemagick-6.q16 irqbalance mozc-utils-gui unattended-upgrades)
 RM_PKGS=()
@@ -30,6 +31,8 @@ ROOT_UUID=87c6b0ce-3bb6-4dc2-9298-3a799bbb5994
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
 BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"
 CACHE_DIR="${BUILD_DIR}/cache"
+TMP_DIR="/tmp/ubuntu-asahi.build/"
+SQUASHFS_FILE="${BUILD_DIR}/rootfs.squashfs"
 
 FS_DIR="$(realpath "${SCRIPTS_DIR}/../fs")"
 FS_COMMON_DIR="${FS_DIR}/common"
