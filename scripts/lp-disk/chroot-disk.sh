@@ -6,11 +6,14 @@ rm -f /00-config.sh
 
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
-DEBIAN_FRONTEND=noninteractive
+(
+export DEBIAN_FRONTEND=noninteractive
 apt-get --yes update 2>&1| capture_and_log "apt update"
+xargs apt-get --yes purge < livecd.*.manifest-remove
 if [ ${#LP_DISK_PKGS[@]} -ne 0 ]; then
-    eatmydata apt-get --yes install ${LP_DISK_PKGS[@]} 2>&1| capture_and_log "install disk packages"
+    apt-get --yes install ${LP_DISK_PKGS[@]} 2>&1| capture_and_log "install disk packages"
 fi
+)
 
 info "Synchronizing changes to disk"
 sync
@@ -43,8 +46,8 @@ grub-mkimage \
 rm -rf /etc/grub.d/30_uefi-firmware
 
 # This is not a cloud
-eatmydata apt-get --yes purge cloud-init
-eatmydata apt-get --yes autoremove
+apt-get --yes purge cloud-init
+apt-get --yes autoremove
 
 info "Adding user ubuntu"
 useradd ubuntu -s /bin/bash -m -G adm,dialout,cdrom,sudo,dip,plugdev,lpadmin

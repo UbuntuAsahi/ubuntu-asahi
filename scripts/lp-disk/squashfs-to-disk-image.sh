@@ -42,6 +42,7 @@ cp "${initrd[0]}" "$(readlink -f "${MNT_DIR}/boot/initrd.img")"
 cp "${kern[0]}" "$(readlink -f "${MNT_DIR}/boot/vmlinuz")"
 
 mkdir -p "${MNT_DIR}/boot/efi"
+cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
 
 info "Syncing disk files to rootfs.disk"
 rsync -arAHX --chown root:root "${FS_DISK_DIR}/" "${MNT_DIR}/"
@@ -57,10 +58,6 @@ mkdir -p "${CACHE_DIR}"
 mkdir -p "${MNT_DIR}/var/cache/apt/archives"
 mount --bind "${CACHE_DIR}" "${MNT_DIR}/var/cache/apt/archives"
 
-systemd-nspawn --resolv-conf=delete -D "${MNT_DIR}" bash /chroot-disk.sh
-
-rm -f "${MNT_DIR}/chroot-disk.sh"
-
 info "Updating grub config"
 mkdir -p "${MNT_DIR}/boot/grub"
 cat << END > "${MNT_DIR}/boot/grub/grub.cfg"
@@ -70,6 +67,11 @@ linux /boot/vmlinuz root=/dev/disk/by-uuid/${ROOT_UUID} quiet splash
 initrd /boot/initrd.img
 boot
 END
+
+systemd-nspawn --resolv-conf=delete -D "${MNT_DIR}" bash /chroot-disk.sh
+
+rm -f "${MNT_DIR}/chroot-disk.sh"
+rm -f "${MNT_DIR}"/livecd.*.manifest-remove
 
 mkdir -p "${TMP_DIR}"
 
