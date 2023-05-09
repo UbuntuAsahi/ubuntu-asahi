@@ -31,8 +31,17 @@ mount "${LOOP_DEV}" "${MNT_DIR}"
 chown root:root "${MNT_DIR}"
 
 info "Copying to disk"
-unsquashfs -d "${MNT_DIR}" "${SQUASHFS_FILE}" 
-mkdir -p "${MNT_DIR}/boot/grub/efi"
+for filename in "${ARTIFACT_DIR}"/*.squashfs; do
+	unsquashfs -d "${MNT_DIR}" "${filename}"
+done
+
+info "Installing kernel and initrd"
+initrd=("${ARTIFACT_DIR}/"*.initrd-asahi)
+kern=("${ARTIFACT_DIR}/"*.kernel-asahi)
+cp "${initrd[0]}" "$(readlink -f "${MNT_DIR}/boot/initrd.img")"
+cp "${kern[0]}" "$(readlink -f "${MNT_DIR}/boot/vmlinuz")"
+
+mkdir -p "${MNT_DIR}/boot/efi"
 
 info "Syncing disk files to rootfs.disk"
 rsync -arAHX --chown root:root "${FS_DISK_DIR}/" "${MNT_DIR}/"
