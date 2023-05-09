@@ -18,7 +18,7 @@ trap cleanup EXIT
 
 info "Creating ${DISK_IMG_FILE}"
 rm -rf "${DISK_IMG_FILE}"
-fallocate -l "6G" ${DISK_IMG_FILE}
+fallocate -l "8G" ${DISK_IMG_FILE}
 mkfs.ext4 -O '^metadata_csum,^orphan_file' -U "${ROOT_UUID}" -L "ubuntu-root" "${DISK_IMG_FILE}"
 
 # Create a loop device for the image file
