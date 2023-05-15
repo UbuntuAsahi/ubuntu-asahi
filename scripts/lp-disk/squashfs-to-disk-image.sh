@@ -30,19 +30,33 @@ mkdir -p "${MNT_DIR}"
 mount "${LOOP_DEV}" "${MNT_DIR}"
 chown root:root "${MNT_DIR}"
 
-info "Copying to disk"
-for filename in "${ARTIFACT_DIR}"/*.squashfs; do
-	unsquashfs -d "${MNT_DIR}" "${filename}"
-done
+# Figure out livecd-rootfs project
+if find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.*.squashfs -quit; then
+	info "Assuming Ubuntu"
 
-info "Installing kernel and initrd"
-initrd=("${ARTIFACT_DIR}/"*.initrd-asahi)
-kern=("${ARTIFACT_DIR}/"*.kernel-asahi)
-cp "${initrd[0]}" "$(readlink -f "${MNT_DIR}/boot/initrd.img")"
-cp "${kern[0]}" "$(readlink -f "${MNT_DIR}/boot/vmlinuz")"
+	# Regular Ubuntu images come with a different squashfs format
+	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.install.squashfs
+	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.squashfs
+	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.squashfs
+	# unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.en.squashfs
+else
+	echo "Assuming Flavor"
 
-mkdir -p "${MNT_DIR}/boot/efi"
-cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
+	# Flavors use stacked squashfs and ship kernel + initrd in extra files
+	info "Copying to disk"
+	for filename in "${ARTIFACT_DIR}"/*.squashfs; do
+		unsquashfs -d "${MNT_DIR}" "${filename}"
+	done
+
+	info "Installing kernel and initrd"
+	initrd=("${ARTIFACT_DIR}/"*.initrd-asahi)
+	kern=("${ARTIFACT_DIR}/"*.kernel-asahi)
+	cp "${initrd[0]}" "$(readlink -f "${MNT_DIR}/boot/initrd.img")"
+	cp "${kern[0]}" "$(readlink -f "${MNT_DIR}/boot/vmlinuz")"
+
+	mkdir -p "${MNT_DIR}/boot/efi"
+	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
+fi
 
 info "Syncing disk files to rootfs.disk"
 rsync -arAHX --chown root:root "${FS_DISK_DIR}/" "${MNT_DIR}/"

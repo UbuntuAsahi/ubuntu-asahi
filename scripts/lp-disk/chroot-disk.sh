@@ -9,7 +9,12 @@ echo "nameserver 8.8.8.8" > /etc/resolv.conf
 (
 export DEBIAN_FRONTEND=noninteractive
 apt-get --yes update 2>&1| capture_and_log "apt update"
-xargs apt-get --yes purge < livecd.*.manifest-remove
+
+# For flavors we might need to remove some packages
+if find livecd.*.manifest-remove -quit; then
+	xargs apt-get --yes purge < livecd.*.manifest-remove
+fi
+
 if [ ${#LP_DISK_PKGS[@]} -ne 0 ]; then
     apt-get --yes install ${LP_DISK_PKGS[@]} 2>&1| capture_and_log "install disk packages"
 fi
@@ -46,11 +51,12 @@ grub-mkimage \
 rm -rf /etc/grub.d/30_uefi-firmware
 
 # This is not a cloud
+rm -rf /etc/cloud
 apt-get --yes purge cloud-init
 apt-get --yes autoremove
 
 info "Adding user ubuntu"
-useradd ubuntu -s /bin/bash -m -G adm,dialout,cdrom,sudo,dip,plugdev,lpadmin
+useradd ubuntu -s /bin/bash -m -G adm,dialout,cdrom,sudo,dip,plugdev
 chpasswd << 'END'
 ubuntu:ubuntu
 END
