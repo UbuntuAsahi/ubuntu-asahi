@@ -1,7 +1,7 @@
 {
 	"os_list": [
 		{
-			"name": "Ubuntu 23.04 Lunar Desktop",
+			"name": "Ubuntu Desktop 23.04",
 			"default_os_name": "Ubuntu",
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
@@ -28,7 +28,7 @@
 			]
 		},
 		{
-			"name": "Ubuntu 22.04 Jammy Desktop",
+			"name": "Ubuntu Desktop 22.04 LTS",
 			"default_os_name": "Ubuntu",
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
@@ -55,7 +55,7 @@
 			]
 		},
 		{
-			"name": "Ubuntu 22.04 Jammy Server",
+			"name": "Ubuntu Server  22.04 LTS",
 			"default_os_name": "Ubuntu",
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
