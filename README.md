@@ -8,7 +8,7 @@ Apple silicon hardware such as the Apple M1 and M2.
 To install a prebuilt image run:
 
 ```
-curl -sL https://tobhe.de/ubuntu/install > install.sh	# Download
+curl -sL https://ubuntuasahi.org/install > install.sh	# Download
 less install.sh						# Review
 sh install.sh						# Run
 ```
@@ -16,7 +16,7 @@ sh install.sh						# Run
 or if you like to live dangerously:
 
 ```
-curl -sL https://tobhe.de/ubuntu/install | bash
+curl -sL https://ubuntuasahi.org/install | bash
 ```
 
 The installer offers a choice of different Ubuntu releases and build configurations.
