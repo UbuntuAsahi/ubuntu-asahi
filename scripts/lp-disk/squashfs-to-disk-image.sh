@@ -90,9 +90,9 @@ rm -f "${MNT_DIR}"/livecd.*.manifest-remove
 mkdir -p "${TMP_DIR}"
 
 # Copy bootloaders
-m1n1="${MNT_DIR}/usr/share/m1n1/m1n1.bin"
-uboot="${MNT_DIR}/usr/share/u-boot-asahi/u-boot-nodtb.bin"
-dtbs="${MNT_DIR}/lib/firmware/*-asahi/device-tree/apple/*.dtb"
+m1n1="${MNT_DIR}/usr/lib/m1n1/m1n1.bin"
+uboot="${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin"
+dtbs="${MNT_DIR}/lib/firmware/*/device-tree/apple/*.dtb"
 target="${TMP_DIR}/boot.bin"
 cat ${m1n1} ${dtbs} \
     <(gzip -c ${uboot}) \
