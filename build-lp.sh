@@ -8,7 +8,9 @@ if [ -z "$1" ]; then
 fi
 
 # Fetch artifacts
-./scripts/launchpad/get-livefs-build.py "$1" "build/build-$1"
+if [ ! -d "build/build-$1" ]; then
+	sudo -u "$SUDO_USER" ./scripts/launchpad/get-livefs-build.py "$1" "build/build-$1"
+fi
 
 # Pack image
 cd build
