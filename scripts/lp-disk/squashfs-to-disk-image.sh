@@ -32,28 +32,32 @@ chown root:root "${MNT_DIR}"
 
 # Figure out livecd-rootfs project
 if find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.*.squashfs -quit; then
-	info "Assuming Ubuntu"
-
-	# Regular Ubuntu images come with a different squashfs format
+	# Ubuntu > 23.04 images come with a different squashfs format
 	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.install.squashfs
 	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.squashfs
 	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.squashfs
 	# unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.en.squashfs
-else
-	echo "Assuming Flavor"
-
-	# Flavors use stacked squashfs and ship kernel + initrd in extra files
+elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.squashfs -quit; then
+	# Flavors and older Ubuntu releases use stacked squashfs and ship kernel + initrd in extra files
 	info "Copying to disk"
 	for filename in "${ARTIFACT_DIR}"/*.squashfs; do
 		unsquashfs -d "${MNT_DIR}" "${filename}"
 	done
 
 	info "Installing kernel and initrd"
-	initrd=("${ARTIFACT_DIR}/"*.initrd-asahi)
-	kern=("${ARTIFACT_DIR}/"*.kernel-asahi)
+	initrd=("${ARTIFACT_DIR}/"*.initrd-apple-arm)
+	kern=("${ARTIFACT_DIR}/"*.kernel-apple-arm)
 	cp "${initrd[0]}" "$(readlink -f "${MNT_DIR}/boot/initrd.img")"
 	cp "${kern[0]}" "$(readlink -f "${MNT_DIR}/boot/vmlinuz")"
 
+	mkdir -p "${MNT_DIR}/boot/efi"
+	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
+elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.rootfs.tar.gz -quit; then
+	# Format == plain
+	info "Copying to disk"
+	tar -xzf "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.rootfs.tar.gz
+
+	info "Installing kernel and initrd"
 	mkdir -p "${MNT_DIR}/boot/efi"
 	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
 fi
