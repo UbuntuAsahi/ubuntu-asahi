@@ -55,9 +55,7 @@ elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.squashfs -quit; then
 elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.rootfs.tar.gz -quit; then
 	# Format == plain
 	info "Copying to disk"
-	tar -xzf "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.rootfs.tar.gz
-
-	info "Installing kernel and initrd"
+	tar -xzf "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.rootfs.tar.gz -C "${MNT_DIR}"
 	mkdir -p "${MNT_DIR}/boot/efi"
 	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
 fi
