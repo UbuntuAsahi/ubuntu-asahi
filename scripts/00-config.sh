@@ -27,6 +27,7 @@ MAIN_POOL=()
 
 EFI_UUID=2ABF-9F91
 ROOT_UUID=87c6b0ce-3bb6-4dc2-9298-3a799bbb5994
+BOOT_UUID=7cd3f710-4e54-4ded-834d-3dff58521005
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Credit: https://stackoverflow.com/a/246128
 BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"
@@ -50,6 +51,7 @@ ROOTFS_LIVE_DIR="${BUILD_DIR}/rootfs.live"
 CHROOT_MANIFEST="${BUILD_DIR}/chroot.manifest"
 LIVE_MANIFEST="${BUILD_DIR}/live.manifest"
 
+BOOT_IMG_FILE="${BUILD_DIR}/ubuntu.boot.img"
 DISK_IMG_FILE="${BUILD_DIR}/ubuntu.disk.img"
 LIVE_IMG_FILE="${BUILD_DIR}/ubuntu.live.img"
 

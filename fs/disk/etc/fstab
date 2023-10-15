@@ -1,2 +1,3 @@
 UUID=ROOT_UUID	/		ext4	defaults,x-systemd.growfs	0	1
+UUID=BOOT_UUID	/boot		ext4	defaults			0	2
 UUID=EFI_UUID	/boot/efi	vfat	defaults			0	2

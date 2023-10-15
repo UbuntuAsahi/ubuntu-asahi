@@ -10,6 +10,9 @@ echo "nameserver 8.8.8.8" > /etc/resolv.conf
 export DEBIAN_FRONTEND=noninteractive
 apt-get --yes update 2>&1| capture_and_log "apt update"
 
+# XXX: Don't remove grub
+sed -i '/^grub/d' livecd.*.manifest-remove
+
 # For flavors we might need to remove some packages
 if find livecd.*.manifest-remove -quit; then
 	xargs apt-get --yes purge < livecd.*.manifest-remove

@@ -4,7 +4,7 @@ import os
 import requests
 import sys
 
-base = "https://api.launchpad.net/devel/~tobhe/+livefs/ubuntu/lunar/ubuntu-asahi/+build/"
+base = "https://api.launchpad.net/devel/~tobhe/+livefs/ubuntu/jammy/ubuntu-asahi/+build/"
 
 lp = Launchpad.login_anonymously('sru-scanner', 'production', version='devel')
 build = lp.load(base + sys.argv[1])
