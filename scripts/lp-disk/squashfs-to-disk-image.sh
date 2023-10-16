@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 set -e
 
 source "$(dirname "$(readlink -f "$0")")/../00-config.sh"
@@ -8,8 +9,13 @@ source "$(dirname "$(readlink -f "$0")")/../00-config.sh"
 function cleanup {
 	sync
 	umount -Rf "${MNT_DIR}/var/cache/apt/archives" || true
+	umount -Rf "${MNT_DIR}/boot/efi"
 	umount -Rf "${MNT_DIR}/boot"
 	umount -Rf "${MNT_DIR}"
+	losetup --associated "${ESP_FILE}" | cut -d ':' -f1 | while read LODEV
+	do
+		sudo losetup --detach "$LODEV"
+	done
 	losetup --associated "${BOOT_IMG_FILE}" | cut -d ':' -f1 | while read LODEV
 	do
 		sudo losetup --detach "$LODEV"
@@ -20,6 +26,12 @@ function cleanup {
 	done
 }
 trap cleanup EXIT
+
+ESP_FILE=${BUILD_DIR}/ubuntu.efi.img
+info "Creating ${ESP_FILE}"
+rm -rf "${ESP_FILE}"
+fallocate -l "512MB" "${ESP_FILE}"
+mkfs.msdos "${ESP_FILE}"
 
 info "Creating ${DISK_IMG_FILE}"
 rm -rf "${DISK_IMG_FILE}"
@@ -32,6 +44,7 @@ fallocate -l "2G" ${BOOT_IMG_FILE}
 mkfs.ext4 -O '^metadata_csum,^orphan_file' -U "${BOOT_UUID}" -L "ubuntu-boot" "${BOOT_IMG_FILE}"
 
 # Create a loop device for the image file
+ESP_DEV=$(losetup --find --show --partscan "${ESP_FILE}")
 BOOT_LOOP_DEV=$(losetup --find --show --partscan "${BOOT_IMG_FILE}")
 DISK_LOOP_DEV=$(losetup --find --show --partscan "${DISK_IMG_FILE}")
 
@@ -41,6 +54,8 @@ mkdir -p "${MNT_DIR}"
 mount "${DISK_LOOP_DEV}" "${MNT_DIR}"
 mkdir -p "${MNT_DIR}/boot"
 mount "${BOOT_LOOP_DEV}" "${MNT_DIR}"/boot
+mkdir -p "${MNT_DIR}/boot/efi"
+mount "${ESP_DEV}" "${MNT_DIR}"/boot/efi
 chown -R root:root "${MNT_DIR}"
 
 # Figure out livecd-rootfs project
@@ -87,46 +102,39 @@ mkdir -p "${CACHE_DIR}"
 mkdir -p "${MNT_DIR}/var/cache/apt/archives"
 mount --bind "${CACHE_DIR}" "${MNT_DIR}/var/cache/apt/archives"
 
-info "Updating grub config"
-mkdir -p "${MNT_DIR}/boot/grub"
-cat << END > "${MNT_DIR}/boot/grub/grub.cfg"
-search.fs_uuid ${BOOT_UUID} boot
-set prefix=(\$boot)'/boot/grub'
-END
-
-systemd-nspawn --resolv-conf=delete -D "${MNT_DIR}" bash /chroot-disk.sh
-
+arch-chroot ${MNT_DIR} /chroot-disk.sh
 rm -f "${MNT_DIR}/chroot-disk.sh"
 rm -f "${MNT_DIR}"/livecd.*.manifest-remove
-
-mkdir -p "${TMP_DIR}"
 
 # Copy bootloaders
 m1n1="${MNT_DIR}/usr/lib/m1n1/m1n1.bin"
 uboot="${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin"
 dtbs="${MNT_DIR}/lib/firmware/*/device-tree/apple/*.dtb"
-target="${TMP_DIR}/boot.bin"
+
+mkdir -p "${MNT_DIR}"/boot/efi/esp/m1n1
+target="${MNT_DIR}/boot/efi/esp/m1n1/boot.bin"
 cat ${m1n1} ${dtbs} \
     <(gzip -c ${uboot}) \
     >"${target}"
-cp "${MNT_DIR}/boot/grub/arm64-efi/core.efi" "${TMP_DIR}/BOOTAA64.EFI"
 
-sync
+# Save ESP contents
+mkdir -p "${TMP_DIR}"/esp
+rsync -arAHX --chown root:root "${MNT_DIR}"/boot/efi/ "${TMP_DIR}"/esp
+
+info "Unmounting"
 umount -Rf "${MNT_DIR}"
 
 info "Packing disk"
-cp "${DISK_IMG_FILE}" "${MNT_DIR}/root.img"
-cp "${BOOT_IMG_FILE}" "${MNT_DIR}/boot.img"
-
-# install grub
-mkdir -p "${MNT_DIR}/esp/EFI/BOOT"
-cp "${TMP_DIR}/BOOTAA64.EFI" "${MNT_DIR}/esp/EFI/BOOT/BOOTAA64.EFI"
-
-# install m1n1
-mkdir -p "${MNT_DIR}/esp/m1n1/"
-cp "${TMP_DIR}/boot.bin" "${MNT_DIR}/esp/m1n1/boot.bin"
+cp "${DISK_IMG_FILE}" "${TMP_DIR}/root.img"
+cp "${BOOT_IMG_FILE}" "${TMP_DIR}/boot.img"
 
 info "Compressing"
 rm -f "${DISK_IMG_FILE}.zip"
-( cd "${MNT_DIR}"; zip -1 -r "${DISK_IMG_FILE}.zip" * )
+( cd "${TMP_DIR}"; zip -1 -r "${DISK_IMG_FILE}.zip" * )
+
+info "Cleaning up"
 rm -rf "${MNT_DIR}"
+rm -f "${ESP_FILE}"
+rm -f "${DISK_IMG_FILE}"
+rm -f "${BOOT_IMG_FILE}"
+rm -rf "${TMP_DIR}"
