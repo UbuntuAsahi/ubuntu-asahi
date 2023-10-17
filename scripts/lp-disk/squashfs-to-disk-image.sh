@@ -119,7 +119,7 @@ cat ${m1n1} ${dtbs} \
 
 # Save ESP contents
 mkdir -p "${TMP_DIR}"/esp
-rsync -arAHX --chown root:root "${MNT_DIR}"/boot/efi/ "${TMP_DIR}"/esp
+rsync -arAHX --chown root:root "${MNT_DIR}"/boot/efi/ "${TMP_DIR}"
 
 info "Unmounting"
 umount -Rf "${MNT_DIR}"
