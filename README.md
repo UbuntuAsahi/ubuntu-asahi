@@ -23,9 +23,8 @@ The installer offers a choice of different Ubuntu releases and build configurati
 
 Currently supported are:
 
-- Ubuntu Desktop 23.04
+- Ubuntu Desktop 23.10
 - Ubuntu Desktop 22.04 LTS
-- Ubuntu Server 22.04 LTS
 
 The default username and password are both **ubuntu**. Root access can be achieved via `sudo`.
 
@@ -58,16 +57,6 @@ sudo ./build-generic.sh
 
 The live GPT image file will be output to `build/ubuntu.live.img`, the zip archive for the Asahi Linux installer
 will be output to `build/ubuntu.live.img.zip`.
-
-### Clean
-
-The `clean.sh` script will do exactly what it says - it will clean up the `build` folder, except for the `cache` folder, which is used by debootstrap to cache debs.
-
-```sh
-cd ubuntu-asahi
-# Clean the build folder
-./clean.sh
-```
 
 ### Related Projects
 
