@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -x
 set -e
 
 source "00-config.sh"
