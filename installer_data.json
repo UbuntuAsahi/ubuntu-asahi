@@ -1,12 +1,45 @@
 {
 	"os_list": [
 		{
+			"name": "Ubuntu Desktop 23.10",
+			"default_os_name": "Ubuntu",
+			"boot_object": "m1n1.bin",
+			"next_object": "m1n1/boot.bin",
+			"package": "ubuntu-desktop-23.10-20231019.zip",
+			"supported_fw": ["12.3", "12.3.1", "12.4", "13.3", "13.5"],
+			"partitions": [
+				{
+					"name": "EFI",
+					"type": "EFI",
+					"size": "500MB",
+					"format": "fat",
+					"volume_id": "0x2abf9f91",
+					"copy_firmware": true,
+					"copy_installer_data": true,
+					"source": "esp"
+				},
+				{
+					"name": "Boot",
+					"type": "Linux",
+					"size": "2147483648B",
+					"image": "boot.img"
+				},
+				{
+					"name": "Root",
+					"type": "Linux",
+					"size": "12GB",
+					"expand": true,
+					"image": "root.img"
+				}
+			]
+		},
+		{
 			"name": "Ubuntu Desktop 23.04",
 			"default_os_name": "Ubuntu",
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
-			"package": "ubuntu-desktop-23.04-20230619.zip",
-			"supported_fw": ["12.3", "12.3.1", "12.4", "13.3"],
+			"package": "ubuntu-desktop-23.04-20231012.zip",
+			"supported_fw": ["12.3", "12.3.1", "12.4", "13.3", "13.5"],
 			"partitions": [
 				{
 					"name": "EFI",
@@ -32,8 +65,8 @@
 			"default_os_name": "Ubuntu",
 			"boot_object": "m1n1.bin",
 			"next_object": "m1n1/boot.bin",
-			"package": "ubuntu-desktop-22.04-20221104.zip",
-			"supported_fw": ["12.3", "12.3.1", "12.4"],
+			"package": "ubuntu-desktop-22.04-20231022.zip",
+			"supported_fw": ["12.3", "12.3.1", "12.4", "13.3", "13.5"],
 			"partitions": [
 				{
 					"name": "EFI",
@@ -46,38 +79,17 @@
 					"source": "esp"
 				},
 				{
-					"name": "Root",
+					"name": "Boot",
 					"type": "Linux",
-					"size": "6GB",
-					"expand": true,
-					"image": "disk.img"
-				}
-			]
-		},
-		{
-			"name": "Ubuntu Server  22.04 LTS",
-			"default_os_name": "Ubuntu",
-			"boot_object": "m1n1.bin",
-			"next_object": "m1n1/boot.bin",
-			"package": "ubuntu-server-22.04-20221104.zip",
-			"supported_fw": ["12.3", "12.3.1", "12.4"],
-			"partitions": [
-				{
-					"name": "EFI",
-					"type": "EFI",
-					"size": "500MB",
-					"format": "fat",
-					"volume_id": "0x2abf9f91",
-					"copy_firmware": true,
-					"copy_installer_data": true,
-					"source": "esp"
+					"size": "2147483648B",
+					"image": "boot.img"
 				},
 				{
 					"name": "Root",
 					"type": "Linux",
-					"size": "6GB",
+					"size": "12GB",
 					"expand": true,
-					"image": "disk.img"
+					"image": "root.img"
 				}
 			]
 		}
