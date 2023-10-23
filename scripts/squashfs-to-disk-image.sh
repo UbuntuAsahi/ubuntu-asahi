@@ -3,7 +3,7 @@
 set -x
 set -e
 
-source "$(dirname "$(readlink -f "$0")")/../00-config.sh"
+source "00-config.sh"
 
 # Go back to starting dir on script exit
 function cleanup {
