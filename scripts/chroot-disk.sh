@@ -2,12 +2,8 @@
 
 set -e
 
-_GREEN=$(tput setaf 2 || "")
-_RESET=$(tput sgr0 || "")
-_BOLD=$(tput bold || "")
-
 function log {
-	echo "[${_GREEN}${_BOLD}info${_RESET}] $@"
+	echo "[$(tput setaf 2)$(tput bold)info$(tput sgr0)] $@"
 }
 
 export DEBIAN_FRONTEND=noninteractive

@@ -19,15 +19,8 @@ FS_DISK_DIR="${FS_DIR}/disk"
 MNT_DIR="${BUILD_DIR}/mnt"
 TMP_DIR="/tmp/ubuntu-asahi.build/"
 
-_RED=$(tput setaf 1 || "")
-_GREEN=$(tput setaf 2 || "")
-_YELLOW=$(tput setaf 3 || "")
-_RESET=$(tput sgr0 || "")
-_BOLD=$(tput bold || "")
-_DIM=$(tput dim || "")
-
 function log {
-	echo "[${_GREEN}${_BOLD}info${_RESET}] $@"
+	echo "[$(tput setaf 2)$(tput bold)info$(tput sgr0)] $@"
 }
 
 # Go back to starting dir on script exit
@@ -120,8 +113,7 @@ log "Fixing fstab"
 sed -i "s|ROOT_UUID|${ROOT_UUID}|g;s|EFI_UUID|${EFI_UUID}|g;s|BOOT_UUID|${BOOT_UUID}|g" \
     "${MNT_DIR}/etc/fstab"
 
-cp -f "${SCRIPTS_DIR}/00-config.sh" "${MNT_DIR}"
-cp -f "${SCRIPTS_DIR}/lp-disk/chroot-disk.sh" "${MNT_DIR}"
+cp -f "${SCRIPTS_DIR}/chroot-disk.sh" "${MNT_DIR}"
 
 mkdir -p "${CACHE_DIR}"
 mkdir -p "${MNT_DIR}/var/cache/apt/archives"
