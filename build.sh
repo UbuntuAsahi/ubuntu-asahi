@@ -9,11 +9,11 @@ fi
 
 # Fetch artifacts
 if [ ! -d "build/build-$1" ]; then
-	sudo -u "$SUDO_USER" ./scripts/launchpad/get-livefs-build.py "$1" "build/build-$1"
+	sudo -u "$SUDO_USER" ./scripts/get-livefs-build.py "$1" "build/build-$1"
 fi
 
 # Pack image
 cd build
-ARTIFACT_DIR="build-$1" ../scripts/lp-disk/squashfs-to-disk-image.sh
+ARTIFACT_DIR="build-$1" ../scripts/squashfs-to-disk-image.sh
  
 echo "Done"
