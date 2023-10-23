@@ -1,6 +1,0 @@
-Archive: UBUNTU_CODE
-Version: DISTRO_VERSION
-Component: COMPONENT
-Origin: Ubuntu
-Label: Ubuntu
-Architecture: arm64
