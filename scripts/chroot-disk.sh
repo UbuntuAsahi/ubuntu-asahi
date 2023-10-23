@@ -1,9 +1,14 @@
 #!/bin/bash
+
 set -e
 
-# For info
-source /00-config.sh
-rm -f /00-config.sh
+_GREEN=$(tput setaf 2 || "")
+_RESET=$(tput sgr0 || "")
+_BOLD=$(tput bold || "")
+
+function log {
+	echo "[${_GREEN}${_BOLD}info${_RESET}] $@"
+}
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -14,12 +19,12 @@ if find livecd.*.manifest-remove -quit; then
 	xargs apt-get --yes purge < livecd.*.manifest-remove
 fi
 
-info "Installing grub"
+log "Installing grub"
 mkdir -p /boot/efi/esp
 grub-install --target=arm64-efi --efi-directory=/boot/efi/esp
 grub-mkconfig -o /boot/grub/grub.cfg
 
-info "Adding user ubuntu"
+log "Adding user ubuntu"
 useradd ubuntu -s /bin/bash -m -G adm,dialout,cdrom,sudo,dip,plugdev
 chpasswd << 'END'
 ubuntu:ubuntu
@@ -27,6 +32,6 @@ END
 usermod -L root
 
 # Clean up any left-behind crap, such as tempfiles and machine-id.
-info "Cleaning up data..."
+log "Cleaning up data..."
 rm -rf /tmp/*
 rm -f /var/lib/dbus/machine-id

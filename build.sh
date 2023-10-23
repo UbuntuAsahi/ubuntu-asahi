@@ -14,6 +14,6 @@ fi
 
 # Pack image
 cd build
-ARTIFACT_DIR="build-$1" ../scripts/squashfs-to-disk-image.sh
+ARTIFACT_DIR="build-$1" ../scripts/livefs-to-asahi.sh
  
 echo "Done"
