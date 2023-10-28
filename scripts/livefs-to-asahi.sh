@@ -1,15 +1,11 @@
 #!/bin/bash
 
+set -x
 set -e
 
 EFI_UUID=2ABF-9F91
 ROOT_UUID=87c6b0ce-3bb6-4dc2-9298-3a799bbb5994
 BOOT_UUID=7cd3f710-4e54-4ded-834d-3dff58521005
-
-BOOT_IMG_FILE="${BUILD_DIR}/ubuntu.boot.img"
-ROOT_IMG_FILE="${BUILD_DIR}/ubuntu.disk.img"
-LIVE_IMG_FILE="${BUILD_DIR}/ubuntu.live.img"
-ESP_FILE=${BUILD_DIR}/ubuntu.efi.img
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"
@@ -18,6 +14,11 @@ FS_DIR="$(realpath "${SCRIPTS_DIR}/../fs")"
 FS_DISK_DIR="${FS_DIR}/disk"
 MNT_DIR="${BUILD_DIR}/mnt"
 TMP_DIR="/tmp/ubuntu-asahi.build/"
+
+BOOT_IMG_FILE="${BUILD_DIR}/ubuntu.boot.img"
+ROOT_IMG_FILE="${BUILD_DIR}/ubuntu.disk.img"
+LIVE_IMG_FILE="${BUILD_DIR}/ubuntu.live.img"
+ESP_FILE=${BUILD_DIR}/ubuntu.efi.img
 
 function log {
 	echo "[$(tput setaf 2)$(tput bold)info$(tput sgr0)] $@"
@@ -98,10 +99,10 @@ elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.squashfs -quit; then
 
 	mkdir -p "${MNT_DIR}/boot/efi"
 	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
-elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.rootfs.tar.gz -quit; then
+elif find "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -quit; then
 	# Format == plain
 	log "Copying to disk"
-	tar -xzf "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.rootfs.tar.gz -C "${MNT_DIR}"
+	tar -xzf "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -C "${MNT_DIR}"
 	mkdir -p "${MNT_DIR}/boot/efi"
 	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
 fi
