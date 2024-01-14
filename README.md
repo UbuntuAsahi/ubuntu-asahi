@@ -28,35 +28,41 @@ Currently supported are:
 
 The default username and password are both **ubuntu**. Root access can be achieved via `sudo`.
 
-### Can I dual-boot macOS and Linux?
+# FAQ
 
-Yes! The installer can automatically resize your macos partition according to your liking and install
-Ubuntu in the freed up space. Removing macos is not even supported at the moment since it is required
+## Can I dual-boot macOS and Linux?
+
+Yes! The installer can automatically resize your macos partition according to
+your liking and install Ubuntu in the freed up space.
+Removing macos is not even supported at the moment since it is required
 to update the system firmware.
 
-## Building
+## Does Ubuntu Asahi support the same features/hardware as Fedora Asahi?
 
-If you do not want to use the prebuilt disk image, you can build one yourself with the instructions below.
+We try to quickly adapt features added by the reference Asahi distribution.
+Since we always wait for an official release first, it might take us a few
+weeks longer to roll out support for new hardware but we generally aim for
+feature parity.
 
-### Install dependencies
+## What do I need to do to enable graphics acceleration/sound/webcam?
 
-```sh
-# Install dependencies
-sudo apt-get install arch-install-scripts debootstrap mtools parted gnupg eatmydata rsync git squashfs-tools zip
-# Install dependencies, if your builder system is NOT arm64
-sudo apt-get install binfmt-support qemu qemu-user-static
-```
+No additional steps are necessary, it should all work out of the box.
+In the past there was an "linux-asahi-edge" kernel providing additional
+features, nowadays everything is included by default.
 
-### Build everything
+## How can I boot macos or change the default boot entry?
 
-```sh
-cd ubuntu-asahi
-# Build the entire live image
-sudo ./build-generic.sh
-```
+Hold the power button on boot until you see "Loading starup options". You can
+now choose which system you want to boot. You can change the default boot entry
+by holding the `Option` key and selecting "Always Use".
 
-The live GPT image file will be output to `build/ubuntu.live.img`, the zip archive for the Asahi Linux installer
-will be output to `build/ubuntu.live.img.zip`.
+## How can I remove Ubuntu Asahi?
+
+There is no automated uninstaller, but you can uninstall Ubuntu Asahi by booting
+into macos, removing all Ubuntu partitions and then resizing the macos APFS
+container to the full size.
+A detailed guide is provided in the
+[Asahi Linux Wiki](https://github.com/AsahiLinux/docs/wiki/Partitioning-cheatsheet).
 
 ### Related Projects
 
