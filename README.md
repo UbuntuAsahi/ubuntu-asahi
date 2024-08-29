@@ -64,7 +64,7 @@ features, nowadays everything is included by default.
 
 ## How can I boot macos or change the default boot entry?
 
-Hold the power button on boot until you see "Loading starup options". You can
+Hold the power button on boot until you see "Loading startup options". You can
 now choose which system you want to boot. You can change the default boot entry
 by holding the `Option` key and selecting "Always Use".
 
