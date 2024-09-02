@@ -40,6 +40,23 @@ Currently supported are:
 - Ubuntu Desktop 24.04
 - Ubuntu Desktop 23.10
 
+# Build from launchpad
+
+Install build requirements:
+
+```
+apt install arch-install-scripts icnsutils
+```
+
+To build the asahi-installer zip archive run:
+
+```
+sudo ./build.sh $BUILD_ID
+```
+
+where *BUILD_ID* is the ID of a finished launchpad livefs build where the build
+products are still available.
+
 # FAQ
 
 ## Can I dual-boot macOS and Linux?
