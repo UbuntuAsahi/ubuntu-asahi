@@ -104,7 +104,8 @@ elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.squashfs -quit; then
 elif find "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -quit; then
 	# Format == plain
 	log "Copying to disk"
-	tar -xzf "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -C "${MNT_DIR}"
+	tar -xz --numeric-owner --same-owner -p --xattrs --xattrs-include="*" -f \
+	    "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -C "${MNT_DIR}"
 	mkdir -p "${MNT_DIR}/boot/efi"
 	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
 fi
