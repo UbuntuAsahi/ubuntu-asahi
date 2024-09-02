@@ -54,7 +54,7 @@ To build the asahi-installer zip archive run:
 sudo ./build.sh $BUILD_ID
 ```
 
-where *BUILD_ID* is the ID of a finished launchpad livefs build where the build
+where `BUILD_ID` is the ID of a finished launchpad livefs build where the build
 products are still available.
 
 # FAQ
