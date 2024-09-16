@@ -1,0 +1,70 @@
+name: ubuntu-asahi-desktop
+display-name: Ubuntu Asahi Preinstalled Desktop
+revision: 0
+architecture: arm64
+series: noble
+class: preinstalled
+kernel: linux-asahi-arm
+gadget:
+  url: "https://git.launchpad.net/~canonical-foundations/snap-pc/+git/github-mirror-amd64"
+  branch: classic
+  type: "git"
+rootfs:
+  archive: ubuntu
+  components:
+    - main
+    - restricted
+    - universe
+    - multiverse
+  mirror: "http://ports.ubuntu.com/ubuntu-ports/"
+  sources-list-deb822: true
+  pocket: updates
+  seed:
+    urls:
+      - "https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/"
+    branch: noble
+    names:
+      - desktop
+      - desktop-minimal
+      - desktop-minimal-default-languages
+      - minimal
+      - standard
+customization:
+  extra-snaps:
+    - name: snapd
+    - name: core24
+    - name: gnome-42-2204
+      channel: asahi/stable
+    - name: mesa-2404
+      channel: asahi/stable
+    - name: gtk-common-themes
+      channel: stable/ubuntu-24.04
+    - name: firefox
+      channel: stable/ubuntu-24.04
+    - name: snap-store
+      channel: stable/ubuntu-24.04
+    - name: snapd-desktop-integration
+      channel: stable/ubuntu-24.04
+  extra-packages:
+    - name: ubuntu-asahi
+    - name: language-pack-de-base
+    - name: language-pack-en-base
+    - name: language-pack-es-base
+    - name: language-pack-fr-base
+    - name: language-pack-pt-base
+    - name: language-pack-it-base
+    - name: language-pack-ru-base
+    - name: language-pack-zh-hans-base
+    - name: language-pack-zh-hant-base
+  extra-ppas:
+    - name: ubuntu-asahi/ubuntu-asahi
+      keep-enabled: no
+  cloud-init:
+    user-data: |
+      #cloud-config
+      users: []
+artifacts:
+  img:
+    - name: ubuntu-24.04-preinstalled-desktop-arm64+asahi.img
+  manifest:
+    name: ubuntu-24.04-preinstalled-desktop-arm64+asahi.manifest
