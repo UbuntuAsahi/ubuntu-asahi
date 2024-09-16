@@ -144,15 +144,15 @@ m1n1="${MNT_DIR}/usr/lib/m1n1/m1n1.bin"
 uboot="${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin"
 dtbs="${MNT_DIR}/lib/firmware/*/device-tree/apple/*.dtb"
 
-mkdir -p "${MNT_DIR}"/boot/efi/EFI/m1n1
-target="${MNT_DIR}/boot/efi/EFI/m1n1/boot.bin"
+mkdir -p "${MNT_DIR}"/boot/efi/m1n1
+target="${MNT_DIR}/boot/efi/m1n1/boot.bin"
 cat ${m1n1} ${dtbs} \
     <(gzip -c ${uboot}) \
     >"${target}"
 
 # Save ESP contents
 mkdir -p "${TMP_DIR}"/esp
-rsync -arAHX --chown root:root "${MNT_DIR}"/boot/efi/ "${TMP_DIR}"
+rsync -arAHX --chown root:root "${MNT_DIR}"/boot/efi/ "${TMP_DIR}/esp"
 
 log "Unmounting"
 umount -Rf "${MNT_DIR}"
