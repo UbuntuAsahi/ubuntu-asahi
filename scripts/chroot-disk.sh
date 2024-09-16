@@ -8,6 +8,9 @@ function log {
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Drop extra PPA, this is managed by our meta package
+rm /etc/apt/sources.list.d/extra-ppas.list
+
 # For flavors we might need to remove some packages
 # XXX: Don't remove grub
 sed -i '/^grub/d' livecd.*.manifest-remove || true
