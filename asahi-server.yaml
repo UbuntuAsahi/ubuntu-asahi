@@ -1,0 +1,52 @@
+name: ubuntu-asahi-server
+display-name: Ubuntu Asahi Preinstalled Server
+revision: 0
+architecture: arm64
+series: noble
+class: preinstalled
+kernel: linux-asahi-arm
+gadget:
+  url: "https://git.launchpad.net/~canonical-foundations/snap-pc/+git/github-mirror-amd64"
+  branch: classic
+  type: "git"
+rootfs:
+  archive: ubuntu
+  components:
+    - main
+    - restricted
+    - universe
+    - multiverse
+  mirror: "http://ports.ubuntu.com/ubuntu-ports/"
+  sources-list-deb822: true
+  pocket: updates
+  seed:
+    urls:
+      - "https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/"
+    branch: noble
+    names:
+      - server
+      - minimal
+      - standard
+      - cloud-image
+customization:
+  extra-snaps:
+    - name: snapd
+  extra-packages:
+    - name: ubuntu-asahi
+    - name: grub-efi-arm64-signed
+    # - name: shim-signed
+    # for update-grub
+    - name: grub2-common
+  extra-ppas:
+    - name: ubuntu-asahi/ubuntu-asahi
+      keep-enabled: no
+  cloud-init:
+    user-data: |
+      #cloud-config
+      users: []
+artifacts:
+  rootfs-tarball:
+    name: ubuntu-24.04-preinstalled-server-arm64+asahi.tar.gz
+    compression: gzip
+  manifest:
+    name: ubuntu-24.04-preinstalled-server-arm64+asahi.manifest
