@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 set -e
 
 EFI_UUID=$(uuidgen | tr '[a-z]' '[A-Z]' | cut -c1-8 | fold -w4 | paste -sd '-')
@@ -82,7 +83,12 @@ mount "${ESP_LOOP_DEV}" "${MNT_DIR}"/boot/efi
 chown -R root:root "${MNT_DIR}"
 
 # Figure out livecd-rootfs project
-if find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.*.squashfs -quit; then
+if [ -e "${ROOTFS_TARBALL}" ]; then
+	log "Unpacking rootfs tarball"
+	tar -xz --numeric-owner --same-owner -p --xattrs --xattrs-include="*" -f \
+	    "${ROOTFS_TARBALL}" -C "${MNT_DIR}"
+	project="server"
+elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.*.squashfs -quit; then
 	# Ubuntu > 23.04 images come with a different squashfs format
 	log "Copying to disk"
 	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.install.squashfs
@@ -91,13 +97,13 @@ if find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.*.squashfs -quit; then
 	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.squashfs
 	# unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.no-languages.squashfs
 	# unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.live.squashfs
+	project="desktop"
 elif find "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.ubuntu-server.squashfs -quit; then
 	# ubuntu-server
 	log "Found ubuntu-server. Copying to disk..."
-	unsquashfs -f -no-exit -d "${MNT_DIR}" \
-	    "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.squashfs
-	unsquashfs -f -no-exit -d "${MNT_DIR}" \
-	    "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.ubuntu-server.squashfs
+	unsquashfs -f -follow -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.squashfs
+	unsquashfs -follow -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.ubuntu-server.squashfs
+	project="server"
 elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.squashfs -quit; then
 	# Flavors and older Ubuntu releases use stacked squashfs and ship kernel + initrd in extra files
 	log "Copying to disk"
@@ -113,6 +119,7 @@ elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.squashfs -quit; then
 
 	mkdir -p "${MNT_DIR}/boot/efi"
 	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
+	project="desktop"
 elif find "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -quit; then
 	# Format == plain
 	log "Copying to disk"
@@ -120,6 +127,7 @@ elif find "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -quit; then
 	    "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -C "${MNT_DIR}"
 	mkdir -p "${MNT_DIR}/boot/efi"
 	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
+	project="desktop"
 fi
 
 log "Syncing disk files to rootfs.disk"
@@ -135,7 +143,7 @@ mkdir -p "${CACHE_DIR}"
 mkdir -p "${MNT_DIR}/var/cache/apt/archives"
 mount --bind "${CACHE_DIR}" "${MNT_DIR}/var/cache/apt/archives"
 
-arch-chroot ${MNT_DIR} /chroot-disk.sh
+arch-chroot ${MNT_DIR} /chroot-disk.sh "$project"
 rm -f "${MNT_DIR}/chroot-disk.sh"
 rm -f "${MNT_DIR}"/livecd.*.manifest-remove
 
