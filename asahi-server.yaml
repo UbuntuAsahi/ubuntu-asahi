@@ -29,6 +29,7 @@ rootfs:
       - standard
       - cloud-image
 customization:
+  pocket: updates
   extra-snaps:
     - name: snapd
   extra-packages:
