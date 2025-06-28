@@ -29,7 +29,7 @@ sh install.sh						# Run
 or if you like to live dangerously:
 
 ```
-curl -sL https://ubuntuasahi.org/install | bash
+curl -sL https://ubuntuasahi.org/install | sh
 ```
 
 The installer is interactive and offers a choice of different Ubuntu releases and
