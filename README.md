@@ -37,6 +37,7 @@ build configurations.
 
 Currently supported are:
 
+- Ubuntu Desktop 25.10
 - Ubuntu Desktop 25.04
 - Ubuntu Desktop/Server 24.04
 
