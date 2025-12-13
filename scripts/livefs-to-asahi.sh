@@ -54,7 +54,7 @@ trap cleanup EXIT
 
 log "Creating ${ESP_FILE}"
 rm -rf "${ESP_FILE}"
-fallocate -l "512MB" "${ESP_FILE}"
+fallocate -l "1024MB" "${ESP_FILE}"
 mkfs.msdos "${ESP_FILE}"
 
 log "Creating ${ROOT_IMG_FILE}"
