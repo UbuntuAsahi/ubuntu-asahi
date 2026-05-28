@@ -3,7 +3,18 @@
 set -x
 set -e
 
-EFI_UUID=$(uuidgen | tr '[a-z]' '[A-Z]' | cut -c1-8 | fold -w4 | paste -sd '-')
+if [ "$(id -u)" != "0" ]; then
+	echo "error: run as root"
+	exit 1
+fi
+
+if [ ! -e "${ROOTFS_TARBALL}" ]; then
+	echo "error: ROOTFS_TARBALL not set or file not found: ${ROOTFS_TARBALL}"
+	exit 1
+fi
+
+EFI_UUID_RAW=$(uuidgen | tr -d '-' | cut -c1-8 | tr 'a-z' 'A-Z')
+EFI_UUID="${EFI_UUID_RAW:0:4}-${EFI_UUID_RAW:4:4}"
 ROOT_UUID=$(uuidgen)
 BOOT_UUID=$(uuidgen)
 
@@ -17,7 +28,6 @@ TMP_DIR="/tmp/ubuntu-asahi.build/"
 
 BOOT_IMG_FILE="${BUILD_DIR}/ubuntu.boot.img"
 ROOT_IMG_FILE="${BUILD_DIR}/ubuntu.root.img"
-LIVE_IMG_FILE="${BUILD_DIR}/ubuntu.live.img"
 ESP_FILE=${BUILD_DIR}/ubuntu.efi.img
 
 function log {
@@ -28,21 +38,12 @@ function log {
 function cleanup {
 	sync
 	umount -Rf "${MNT_DIR}/var/cache/apt/archives" || true
-	umount -Rf "${MNT_DIR}/boot/efi"
-	umount -Rf "${MNT_DIR}/boot"
-	umount -Rf "${MNT_DIR}"
-	losetup --associated "${ESP_FILE}" | cut -d ':' -f1 | while read LODEV
-	do
-		sudo losetup --detach "$LODEV"
-	done
-	losetup --associated "${BOOT_IMG_FILE}" | cut -d ':' -f1 | while read LODEV
-	do
-		sudo losetup --detach "$LODEV"
-	done
-	losetup --associated "${ROOT_IMG_FILE}" | cut -d ':' -f1 | while read LODEV
-	do
-		sudo losetup --detach "$LODEV"
-	done
+	umount -Rf "${MNT_DIR}/boot/efi" || true
+	umount -Rf "${MNT_DIR}/boot" || true
+	umount -Rf "${MNT_DIR}" || true
+	losetup --detach "${ESP_LOOP_DEV}" 2>/dev/null || true
+	losetup --detach "${BOOT_LOOP_DEV}" 2>/dev/null || true
+	losetup --detach "${DISK_LOOP_DEV}" 2>/dev/null || true
 
 	rm -rf "${MNT_DIR}"
 	rm -f "${ESP_FILE}"
@@ -59,12 +60,12 @@ mkfs.msdos "${ESP_FILE}"
 
 log "Creating ${ROOT_IMG_FILE}"
 rm -rf "${ROOT_IMG_FILE}"
-fallocate -l "8G" ${ROOT_IMG_FILE}
+fallocate -l "8G" "${ROOT_IMG_FILE}"
 mkfs.ext4 -O '^metadata_csum,^orphan_file' -U "${ROOT_UUID}" -L "ubuntu-root" "${ROOT_IMG_FILE}"
 
 log "Creating ${BOOT_IMG_FILE}"
 rm -rf "${BOOT_IMG_FILE}"
-fallocate -l "2G" ${BOOT_IMG_FILE}
+fallocate -l "2G" "${BOOT_IMG_FILE}"
 mkfs.ext4 -O '^metadata_csum,^orphan_file' -U "${BOOT_UUID}" -L "ubuntu-boot" "${BOOT_IMG_FILE}"
 
 # Create a loop device for the image file
@@ -82,53 +83,19 @@ mkdir -p "${MNT_DIR}/boot/efi"
 mount "${ESP_LOOP_DEV}" "${MNT_DIR}"/boot/efi
 chown -R root:root "${MNT_DIR}"
 
-# Figure out livecd-rootfs project
-if [ -e "${ROOTFS_TARBALL}" ]; then
-	log "Unpacking rootfs tarball"
-	tar -xz --numeric-owner --same-owner -p --xattrs --xattrs-include="*" -f \
-	    "${ROOTFS_TARBALL}" -C "${MNT_DIR}"
-	project="server"
-elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.*.squashfs -quit; then
-	# Ubuntu > 23.04 images come with a different squashfs format
-	log "Copying to disk"
-	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.install.squashfs
-	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.squashfs
-	# unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.no-languages.squashfs
-	unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.squashfs
-	# unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.no-languages.squashfs
-	# unsquashfs -f -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.minimal.standard.live.squashfs
-	project="desktop"
-elif find "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.ubuntu-server.squashfs -quit; then
-	# ubuntu-server
-	log "Found ubuntu-server. Copying to disk..."
-	unsquashfs -f -follow -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.squashfs
-	unsquashfs -follow -d "${MNT_DIR}" "${ARTIFACT_DIR}"/livecd.ubuntu-server-asahi.ubuntu-server-minimal.ubuntu-server.squashfs
-	project="server"
-elif find "${ARTIFACT_DIR}"/livecd.ubuntu-asahi.squashfs -quit; then
-	# Flavors and older Ubuntu releases use stacked squashfs and ship kernel + initrd in extra files
-	log "Copying to disk"
-	for filename in "${ARTIFACT_DIR}"/*.squashfs; do
-		unsquashfs -d "${MNT_DIR}" "${filename}"
-	done
+log "Unpacking rootfs tarball"
+tar -xz --numeric-owner --same-owner -p --xattrs --xattrs-include="*" -f \
+    "${ROOTFS_TARBALL}" -C "${MNT_DIR}"
 
-	log "Installing kernel and initrd"
-	initrd=("${ARTIFACT_DIR}/"*.initrd-apple-arm)
-	kern=("${ARTIFACT_DIR}/"*.kernel-apple-arm)
-	cp "${initrd[0]}" "$(readlink -f "${MNT_DIR}/boot/initrd.img")"
-	cp "${kern[0]}" "$(readlink -f "${MNT_DIR}/boot/vmlinuz")"
-
-	mkdir -p "${MNT_DIR}/boot/efi"
-	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
-	project="desktop"
-elif find "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -quit; then
-	# Format == plain
-	log "Copying to disk"
-	tar -xz --numeric-owner --same-owner -p --xattrs --xattrs-include="*" -f \
-	    "${ARTIFACT_DIR}"/livecd.*.rootfs.tar.gz -C "${MNT_DIR}"
-	mkdir -p "${MNT_DIR}/boot/efi"
-	cp "${ARTIFACT_DIR}"/livecd.*.manifest-remove "${MNT_DIR}"
+if echo "${ROOTFS_TARBALL}" | grep -q "\-server\-"; then
+	project="server"
+else
 	project="desktop"
 fi
+
+VERSION=$(basename "${ROOTFS_TARBALL}" | cut -d'-' -f2)
+DATE=$(date +%Y%m%d)
+OUTPUT="${BUILD_DIR}/ubuntu-${project}-${VERSION}-${DATE}"
 
 log "Syncing disk files to rootfs.disk"
 rsync -arAHX --chown root:root "${FS_DISK_DIR}/" "${MNT_DIR}/"
@@ -143,19 +110,33 @@ mkdir -p "${CACHE_DIR}"
 mkdir -p "${MNT_DIR}/var/cache/apt/archives"
 mount --bind "${CACHE_DIR}" "${MNT_DIR}/var/cache/apt/archives"
 
-arch-chroot ${MNT_DIR} /chroot-disk.sh "$project"
+arch-chroot "${MNT_DIR}" /chroot-disk.sh "$project"
 rm -f "${MNT_DIR}/chroot-disk.sh"
-rm -f "${MNT_DIR}"/livecd.*.manifest-remove
 
 # Copy bootloaders
 m1n1="${MNT_DIR}/usr/lib/m1n1/m1n1.bin"
-uboot="${MNT_DIR}/usr/lib/u-boot/apple_m1/u-boot-nodtb.bin"
-dtbs="${MNT_DIR}/lib/firmware/*/device-tree/apple/*.dtb"
+if [ -e "${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin" ]; then
+	uboot="${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin"
+elif [ -e "${MNT_DIR}/usr/lib/u-boot/apple_m1/u-boot-nodtb.bin" ]; then
+	uboot="${MNT_DIR}/usr/lib/u-boot/apple_m1/u-boot-nodtb.bin"
+else
+	echo "error: u-boot-nodtb.bin not found"
+	exit 1
+fi
+if [ ! -e "${m1n1}" ]; then
+	echo "error: m1n1.bin not found at ${m1n1}"
+	exit 1
+fi
+dtbs=( "${MNT_DIR}"/lib/firmware/*/device-tree/apple/*.dtb )
+if [ ${#dtbs[@]} -eq 0 ]; then
+	echo "error: no DTB files found"
+	exit 1
+fi
 
 mkdir -p "${MNT_DIR}"/boot/efi/m1n1
 target="${MNT_DIR}/boot/efi/m1n1/boot.bin"
-cat ${m1n1} ${dtbs} \
-    <(gzip -c ${uboot}) \
+cat "${m1n1}" "${dtbs[@]}" \
+    <(gzip -c "${uboot}") \
     >"${target}"
 
 # Save ESP contents
@@ -173,15 +154,8 @@ log "Adding logo"
 png2icns "${TMP_DIR}/logo.icns" "${SCRIPTS_DIR}/../media/logo/logo-256.png"
 
 log "Compressing"
-rm -f "${ROOT_IMG_FILE}.zip"
-( cd "${TMP_DIR}"; zip -1 -r "${ROOT_IMG_FILE}.zip" * )
-echo "${EFI_UUID}" > "${ROOT_IMG_FILE}.uuid"
-
-log "Cleaning up"
-rm -rf "${MNT_DIR}"
-rm -f "${ESP_FILE}"
-rm -f "${ROOT_IMG_FILE}"
-rm -f "${BOOT_IMG_FILE}"
-rm -rf "${TMP_DIR}"
+rm -f "${OUTPUT}.zip"
+( cd "${TMP_DIR}"; zip -1 -r "${OUTPUT}.zip" * )
+echo "${EFI_UUID}" > "${OUTPUT}.uuid"
 
 log "Done."
