@@ -2,7 +2,7 @@ name: ubuntu-asahi-server
 display-name: Ubuntu Asahi Preinstalled Server
 revision: 0
 architecture: arm64
-series: noble
+series: resolute
 class: preinstalled
 kernel: linux-asahi-arm
 gadget:
@@ -16,13 +16,13 @@ rootfs:
     - restricted
     - universe
     - multiverse
-  mirror: "http://ports.ubuntu.com/ubuntu-ports/"
+  mirror: "http://archive.ubuntu.com/ubuntu/"
   sources-list-deb822: true
   pocket: updates
   seed:
     urls:
       - "https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/"
-    branch: noble
+    branch: resolute
     names:
       - server
       - minimal
@@ -34,10 +34,6 @@ customization:
     - name: snapd
   extra-packages:
     - name: ubuntu-asahi
-    - name: grub-efi-arm64-signed
-    # - name: shim-signed
-    # for update-grub
-    - name: grub2-common
   extra-ppas:
     - name: ubuntu-asahi/ubuntu-asahi
       keep-enabled: no
@@ -47,7 +43,7 @@ customization:
       users: []
 artifacts:
   rootfs-tarball:
-    name: ubuntu-24.04-preinstalled-server-arm64+asahi.tar.gz
+    name: ubuntu-26.04-preinstalled-server-arm64+asahi.tar.gz
     compression: gzip
   manifest:
-    name: ubuntu-24.04-preinstalled-server-arm64+asahi.manifest
+    name: ubuntu-26.04-preinstalled-server-arm64+asahi.manifest

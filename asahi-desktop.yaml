@@ -2,7 +2,7 @@ name: ubuntu-asahi-desktop
 display-name: Ubuntu Asahi Preinstalled Desktop
 revision: 0
 architecture: arm64
-series: noble
+series: resolute
 class: preinstalled
 kernel: linux-asahi-arm
 gadget:
@@ -16,13 +16,13 @@ rootfs:
     - restricted
     - universe
     - multiverse
-  mirror: "http://ports.ubuntu.com/ubuntu-ports/"
+  mirror: "http://archive.ubuntu.com/ubuntu/"
   sources-list-deb822: true
   pocket: updates
   seed:
     urls:
       - "https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/"
-    branch: noble
+    branch: questing
     names:
       - desktop
       - desktop-minimal
@@ -30,21 +30,22 @@ rootfs:
       - minimal
       - standard
 customization:
+  pocket: updates
   extra-snaps:
     - name: snapd
     - name: core24
-    - name: gnome-42-2204
-      channel: asahi/stable
-    - name: mesa-2404
-      channel: asahi/stable
+    - name: gnome-46-2404
+      channel: stable/ubuntu-26.04
     - name: gtk-common-themes
-      channel: stable/ubuntu-24.04
+      channel: stable/ubuntu-26.04
+    - name: mesa-2404
+      channel: stable/ubuntu-26.04
     - name: firefox
-      channel: stable/ubuntu-24.04
+      channel: stable/ubuntu-26.04
     - name: snap-store
-      channel: stable/ubuntu-24.04
+      channel: stable/ubuntu-26.04
     - name: snapd-desktop-integration
-      channel: stable/ubuntu-24.04
+      channel: stable/ubuntu-26.04
   extra-packages:
     - name: ubuntu-asahi
     - name: language-pack-de-base
@@ -64,7 +65,8 @@ customization:
       #cloud-config
       users: []
 artifacts:
-  img:
-    - name: ubuntu-24.04-preinstalled-desktop-arm64+asahi.img
+  rootfs-tarball:
+    name: ubuntu-26.04-preinstalled-desktop-arm64+asahi.tar.gz
+    compression: gzip
   manifest:
-    name: ubuntu-24.04-preinstalled-desktop-arm64+asahi.manifest
+    name: ubuntu-26.04-preinstalled-desktop-arm64+asahi.manifest
