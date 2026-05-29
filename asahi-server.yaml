@@ -41,6 +41,12 @@ customization:
     user-data: |
       #cloud-config
       users: []
+  manual:
+    copy-file:
+      - source: scripts/chroot.sh
+        destination: /chroot.sh
+    execute:
+      - path: /chroot.sh
 artifacts:
   rootfs-tarball:
     name: ubuntu-26.04-preinstalled-server-arm64+asahi.tar.gz

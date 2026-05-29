@@ -13,14 +13,13 @@ if [ ! -e "${ROOTFS_TARBALL}" ]; then
 	exit 1
 fi
 
-EFI_UUID_RAW=$(uuidgen | tr -d '-' | cut -c1-8 | tr 'a-z' 'A-Z')
+EFI_UUID_RAW=$(uuidgen | tr -d '-' | cut -c1-8 | tr '[:lower:]' '[:upper:]')
 EFI_UUID="${EFI_UUID_RAW:0:4}-${EFI_UUID_RAW:4:4}"
 ROOT_UUID=$(uuidgen)
 BOOT_UUID=$(uuidgen)
 
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 BUILD_DIR="$(realpath "${SCRIPTS_DIR}/../build")"
-CACHE_DIR="${BUILD_DIR}/cache"
 FS_DIR="$(realpath "${SCRIPTS_DIR}/../fs")"
 FS_DISK_DIR="${FS_DIR}/disk"
 MNT_DIR="${BUILD_DIR}/mnt"
@@ -28,19 +27,18 @@ TMP_DIR="/tmp/ubuntu-asahi.build/"
 
 BOOT_IMG_FILE="${BUILD_DIR}/ubuntu.boot.img"
 ROOT_IMG_FILE="${BUILD_DIR}/ubuntu.root.img"
-ESP_FILE=${BUILD_DIR}/ubuntu.efi.img
+ESP_FILE="${BUILD_DIR}/ubuntu.efi.img"
 
 function log {
-	echo "[$(tput setaf 2)$(tput bold)info$(tput sgr0)] $@"
+	echo "[$(tput setaf 2)$(tput bold)info$(tput sgr0)] $*"
 }
 
 # Go back to starting dir on script exit
 function cleanup {
 	sync
-	umount -Rf "${MNT_DIR}/var/cache/apt/archives" || true
-	umount -Rf "${MNT_DIR}/boot/efi" || true
-	umount -Rf "${MNT_DIR}/boot" || true
-	umount -Rf "${MNT_DIR}" || true
+	umount "${ESP_LOOP_DEV}" 2>/dev/null || true
+	umount "${BOOT_LOOP_DEV}" 2>/dev/null || true
+	umount "${DISK_LOOP_DEV}" 2>/dev/null || true
 	losetup --detach "${ESP_LOOP_DEV}" 2>/dev/null || true
 	losetup --detach "${BOOT_LOOP_DEV}" 2>/dev/null || true
 	losetup --detach "${DISK_LOOP_DEV}" 2>/dev/null || true
@@ -104,15 +102,6 @@ log "Fixing fstab"
 sed -i "s|ROOT_UUID|${ROOT_UUID}|g;s|EFI_UUID|${EFI_UUID}|g;s|BOOT_UUID|${BOOT_UUID}|g" \
     "${MNT_DIR}/etc/fstab"
 
-cp -f "${SCRIPTS_DIR}/chroot-disk.sh" "${MNT_DIR}"
-
-mkdir -p "${CACHE_DIR}"
-mkdir -p "${MNT_DIR}/var/cache/apt/archives"
-mount --bind "${CACHE_DIR}" "${MNT_DIR}/var/cache/apt/archives"
-
-arch-chroot "${MNT_DIR}" /chroot-disk.sh "$project"
-rm -f "${MNT_DIR}/chroot-disk.sh"
-
 # Copy bootloaders
 m1n1="${MNT_DIR}/usr/lib/m1n1/m1n1.bin"
 if [ -e "${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin" ]; then
@@ -155,7 +144,7 @@ png2icns "${TMP_DIR}/logo.icns" "${SCRIPTS_DIR}/../media/logo/logo-256.png"
 
 log "Compressing"
 rm -f "${OUTPUT}.zip"
-( cd "${TMP_DIR}"; zip -1 -r "${OUTPUT}.zip" * )
+( cd "${TMP_DIR}"; zip -1 -r "${OUTPUT}.zip" ./* )
 echo "${EFI_UUID}" > "${OUTPUT}.uuid"
 
 log "Done."
