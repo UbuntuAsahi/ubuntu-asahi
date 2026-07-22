@@ -102,32 +102,6 @@ log "Fixing fstab"
 sed -i "s|ROOT_UUID|${ROOT_UUID}|g;s|EFI_UUID|${EFI_UUID}|g;s|BOOT_UUID|${BOOT_UUID}|g" \
     "${MNT_DIR}/etc/fstab"
 
-# Copy bootloaders
-m1n1="${MNT_DIR}/usr/lib/m1n1/m1n1.bin"
-if [ -e "${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin" ]; then
-	uboot="${MNT_DIR}/usr/lib/u-boot-asahi/u-boot-nodtb.bin"
-elif [ -e "${MNT_DIR}/usr/lib/u-boot/apple_m1/u-boot-nodtb.bin" ]; then
-	uboot="${MNT_DIR}/usr/lib/u-boot/apple_m1/u-boot-nodtb.bin"
-else
-	echo "error: u-boot-nodtb.bin not found"
-	exit 1
-fi
-if [ ! -e "${m1n1}" ]; then
-	echo "error: m1n1.bin not found at ${m1n1}"
-	exit 1
-fi
-dtbs=( "${MNT_DIR}"/lib/firmware/*/device-tree/apple/*.dtb )
-if [ ${#dtbs[@]} -eq 0 ]; then
-	echo "error: no DTB files found"
-	exit 1
-fi
-
-mkdir -p "${MNT_DIR}"/boot/efi/m1n1
-target="${MNT_DIR}/boot/efi/m1n1/boot.bin"
-cat "${m1n1}" "${dtbs[@]}" \
-    <(gzip -c "${uboot}") \
-    >"${target}"
-
 # Save ESP contents
 mkdir -p "${TMP_DIR}"/esp
 rsync -arAHX --chown root:root "${MNT_DIR}"/boot/efi/ "${TMP_DIR}/esp"
